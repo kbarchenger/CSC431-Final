@@ -1,0 +1,68 @@
+<html>
+<head>
+<script type="text/javascript" src="project.js"></script>
+<script type="text/javascript">
+
+// Test of Linear Algebra functions
+test1 = function() {
+    try{
+        var M = new Matrix(2,3,-1);
+        var N = new Matrix(2,3,[1,2,3,4,5,6]);
+        var O = new Matrix(3,2,[1,2,3,4,5,6]);
+
+        print_matrix(M);
+        print_matrix(N);
+        print_matrix(O);
+
+        var P = M.add(N);
+        print_matrix(P);
+
+        var Q = M.sub(N);
+        print_matrix(Q);
+
+        var R = identity_matrix(3);
+        var S = diagonal_matrix([1,2,3,4]);
+        var T = matrix_from_list([[1,2,3],[4,5,6],[7,8,9]]);
+        var U = T.neg();
+
+        print_matrix(R);
+        print_matrix(S);
+        print_matrix(T);
+        print_matrix(U);
+
+        var V = M.mult(2);
+        print_matrix(M);
+        print_matrix(V);
+
+        var W = N.mult(O);
+        print_matrix(W);
+
+        var X = T.swap_rows(0,1);
+        print_matrix(T);
+        print_matrix(X);
+
+        var Y = N.transpose();
+        print_matrix(N);
+        print_matrix(Y);
+
+        var F = new Matrix(2,2,[1,2,3,4]);
+        var G = F.inverse();
+        print_matrix(G);
+
+        var J = F.div(2);
+        print_matrix(J);
+
+        var K = new Matrix(2,2,[4,3,2,1]);
+        var L = K.div(F);
+        print_matrix(L);
+    }
+    catch(err) {
+        alert(err);
+    }
+}
+
+test1();
+
+</script>
+</head>
+</html>
