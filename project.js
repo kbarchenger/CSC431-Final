@@ -249,3 +249,39 @@ Matrix.prototype.transpose = function() {
 
     return m;
 }
+
+// Returns true if this matrix is almost symmetric
+Matrix.prototype.is_almost_symmetric = function() {
+    if (this.rows !== this.cols) { return false; }
+	
+    var ap = 1e-6;
+    var rp = 1e-4;
+	
+    for (r = 0; r < this.rows; r++) {
+        for (c = 0; c < this.rows; c++) {
+            var delta = Math.abs(this.data[r][c] - this.data[c][r])
+            if (delta > ap && delta > Math.max(Math.abs(this.data[r][c]), 
+                Math.abs(this.data[c][r]))*rp) { 
+                return false;
+            }
+        }
+    }
+    return true;
+}
+
+// Returns true if this matrix is almost zero
+Matrix.prototype.is_almost_zero = function() {
+    var ap = 1e-6;
+    var rp = 1e-4;
+
+    for (r = 0; r < this.rows; r++) {
+        for (c = 0; c < this.cols; c++) {
+            var delta = Math.abs(this.data[r][c] - this.data[c][r])
+            if (delta > ap && delta > Math.max(Math.abs(this.data[r][c]), 
+                Math.abs(this.data[c][r]))*rp) { 
+                return false;
+            }
+        }
+    }
+    return true;
+}

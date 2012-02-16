@@ -55,6 +55,26 @@ test1 = function() {
         var K = new Matrix(2,2,[4,3,2,1]);
         var L = K.div(F);
         print_matrix(L);
+        
+        var AA = new Matrix(2,2,[1,0,0,1]);
+        var AA_bool = AA.is_almost_symmetric();
+        print_matrix(AA);
+        console.log('Matrix is almost symmetric: ' + AA_bool);
+        
+        var AB = new Matrix(2,2,[1,2,3,4]);
+        var AB_bool = AB.is_almost_symmetric();
+        print_matrix(AB);
+        console.log('Matrix is almost symmetric: ' + AB_bool);
+        
+        var AC = new Matrix(2,2,[1,0,0,1]);
+        var AC_bool = AC.is_almost_zero();
+        print_matrix(AC);
+        console.log('Matrix is almost zero: ' + AC_bool);
+
+        var AD = new Matrix(2,2,[1,2,3,4]);
+        var AD_bool = AD.is_almost_zero();
+        print_matrix(AD);
+        console.log('Matrix is almost zero: ' + AD_bool);
     }
     catch(err) {
         alert(err);
