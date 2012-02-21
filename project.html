@@ -75,6 +75,12 @@ test1 = function() {
         var AD_bool = AD.is_almost_zero();
         print_matrix(AD);
         console.log('Matrix is almost zero: ' + AD_bool);
+        
+        var AE = new Matrix(3,3,[2,-1,0,-1,2,-1,0,-1,2]);
+        var AE_Chol = Cholesky(AE);
+        print_matrix(AE);
+        console.log('After Cholesky:');
+        print_matrix(AE_Chol);
     }
     catch(err) {
         alert(err);

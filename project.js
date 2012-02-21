@@ -296,3 +296,36 @@ normA = function(A,p){
 		return Math.pow(a,(1.0/p));
 	}
 };
+
+// Runs the Cholesky decomposition on the array A
+Cholesky = function(A) {
+	if (!A.is_almost_symmetric()) {
+		throw "Is not symmetric";
+	}
+	
+	L = matrix_from_list(A.data);
+	
+	for (k = 0; k < L.cols; k++) {
+		if (L.data[k][k] <= 0) {
+			throw "Not positive definite";
+		}
+		p = Math.sqrt(L.data[k][k]);
+		L.data[k][k] = Math.sqrt(L.data[k][k]);
+		for (i = k+1; i < L.rows; i++) {
+			L.data[i][k] /= p;
+		}
+		for (j = k+1; j < L.rows; j++) {
+			p = L.data[j][k];
+			for (i = k+1; i < L.rows; i++) {
+				L.data[i][j] -= p*L.data[i][k];
+			}
+		}
+	}
+	for (i = 0; i < L.rows; i++) {
+		for (j = i+1; j < L.cols; j++) {
+			L.data[i][j] = 0;
+		}
+	}
+	
+	return L;
+}
