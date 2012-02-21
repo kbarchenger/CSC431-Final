@@ -285,3 +285,14 @@ Matrix.prototype.is_almost_zero = function() {
     }
     return true;
 }
+
+//Norm of an array
+normA = function(A,p){
+	if (A instanceof Array) {
+		var a = 0;
+		for (x=0; x<A.length; x++) {
+			a += Math.pow(A[x],p);
+		}
+		return Math.pow(a,(1.0/p));
+	}
+};
