@@ -76,11 +76,20 @@ test1 = function() {
         print_matrix(AD);
         console.log('Matrix is almost zero: ' + AD_bool);
         
+        // Testing Cholesky
         var AE = new Matrix(3,3,[2,-1,0,-1,2,-1,0,-1,2]);
         var AE_Chol = Cholesky(AE);
         print_matrix(AE);
         console.log('After Cholesky:');
         print_matrix(AE_Chol);
+        
+        // Testing is_positive_definite
+        var AE_bool = is_positive_definite(AE);       
+        console.log('Is positive definite? ' + AE_bool);
+        var AF = new Matrix(2,2,[1,2,2,1]);
+        var AF_bool = is_positive_definite(AF);
+        print_matrix(AF);
+        console.log('Is positive definite? ' + AF_bool);
     }
     catch(err) {
         alert(err);

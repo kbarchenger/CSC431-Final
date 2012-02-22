@@ -329,3 +329,18 @@ Cholesky = function(A) {
 	
 	return L;
 }
+
+// Returns true if the matrix A is positive definite
+// Uses Cholesky(A) to determine
+is_positive_definite = function(A) {
+	if (!A.is_almost_symmetric()) {
+		return false;
+	}
+	try {
+		Cholesky(A);
+		return true;
+	}
+	catch (err) {
+		return false;
+	}
+}
