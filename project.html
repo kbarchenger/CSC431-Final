@@ -90,6 +90,25 @@ test1 = function() {
         var AF_bool = is_positive_definite(AF);
         print_matrix(AF);
         console.log('Is positive definite? ' + AF_bool);
+        
+        // Testing Markovitz
+        var AG = matrix_from_list([[0.04, 0.006,0.02],
+                                   [0.006,0.09, 0.06],
+                                   [0.02, 0.06, 0.16]]);
+        var mu = matrix_from_list([[0.10],[0.12],[0.15]]);
+        var r_free = 0.05;
+        var AG_port, AG_risk, AG_return;
+        AG_results = Markovitz(mu, AG, r_free);
+        AG_port = AG_results[0];
+        AG_return = AG_results[1];
+        AG_risk = AG_results[2];
+        console.log('AG:');
+        print_matrix(AG);
+        console.log('AG portfolio:');
+        print_matrix(AG_port);
+        console.log('AG risk: ' + AG_risk);
+        console.log('AG return: ' + AG_return);
+
     }
     catch(err) {
         alert(err);

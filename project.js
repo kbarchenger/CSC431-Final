@@ -1,3 +1,4 @@
+// Created by Kimberly Barchenger and Jennifer Shaw
 // This code is distributed under the BSD license and it is a rewrite of code
 // shared in class CSC431 at DePaul University by Massimo Di Pierro.
 
@@ -87,50 +88,91 @@ Matrix.prototype.neg = function() {
     return n;
 }
 
-// Adds matrix m1 to this matrix
-Matrix.prototype.add = function(m1) {
-    if (this.rows !== m1.rows) {
-        throw "Rows don't match up";
-    }
-    if (this.cols !== m1.cols) {
-        throw "Columns don't match up";
-    }
-
-    var n = new Matrix(this.rows, this.cols, 0);
-    for (r = 0; r < this.rows; r++) {
-        for (c = 0; c < this.cols; c++) {
-            n.data[r][c] = this.data[r][c] + m1.data[r][c];
+// Computes this + B for B a matrix or scalar
+Matrix.prototype.add = function(B) {
+    if (B instanceof Matrix) {
+        if (this.rows !== B.rows) {
+            throw "Rows don't match up";
         }
+        if (this.cols !== B.cols) {
+            throw "Columns don't match up";
+        }
+
+        var m = new Matrix(this.rows, this.cols, 0);
+        for (r = 0; r < this.rows; r++) {
+            for (c = 0; c < this.cols; c++) {
+                m.data[r][c] = this.data[r][c] + B.data[r][c];
+            }
+        }
+        return m;
     }
-    return n;
+    else if (typeof(B) === 'number') {
+        var m = new Matrix(this.rows, this.cols, 0);
+        for (i = 0; i < m.rows; i++) {
+            for (j = 0; j < m.cols; j++) {
+                m.data[i][j] = this.data[i][j] + B;
+            }
+        }
+        return m;
+    }
+    else {
+        throw "B must be a matrix or number.";
+    }
 };
 
-// Subtracts matrix m1 from this matrix
-Matrix.prototype.sub = function(m1) {
-    if (this.rows !== m1.rows) {
-        throw "Rows don't match up";
-    }
-    if (this.cols !== m1.cols) {
-        throw "Columns don't match up";
-    }
-	
-    var n = new Matrix(this.rows, this.cols, 0);
-	
-    for (r = 0; r < this.rows; r++) {
-        for (c = 0; c < this.cols; c++) {
-            n.data[r][c] = this.data[r][c] - m1.data[r][c];
+// Computes this - B for B a matrix or scalar
+Matrix.prototype.sub = function(B) {
+    if (B instanceof Matrix) {
+        if (this.rows !== B.rows) {
+            throw "Rows don't match up";
         }
+        if (this.cols !== B.cols) {
+            throw "Columns don't match up";
+        }
+
+        var m = new Matrix(this.rows, this.cols, 0);
+
+        for (r = 0; r < this.rows; r++) {
+            for (c = 0; c < this.cols; c++) {
+                m.data[r][c] = this.data[r][c] - B.data[r][c];
+            }
+        }
+        return m;
     }
-    return n;
+    else if (typeof(B) === 'number') {
+        var m = new Matrix(this.rows, this.cols, 0);
+        for (i = 0; i < m.rows; i++) {
+            for (j = 0; j < m.cols; j++) {
+                m.data[i][j] = this.data[i][j] - B;
+            }
+        }
+        return m;
+    }
+    else {
+        throw "B must be a matrix or number.";
+    }
 };
 
 // Computes this * B for B a matrix or scalar
+// If this and B both single column matrices with same number of rows,
+// compute scalar product
 Matrix.prototype.mult = function(B){
     if (B instanceof Matrix) {
         var m = new Matrix(this.rows, B.cols, 0);
 
         if (this.cols !== B.rows) {
-            throw "This matrix columns != matrix 1 rows";
+            // Return scalar product
+            if (this.cols === 1 && B.cols === 1 && this.rows === B.rows) {
+                // Return scalar product
+                var sum = 0;
+                for (r = 0; r < this.rows; r++) {
+                    sum += this.data[r][0] * B.data[r][0];
+                }
+                return sum;
+            }
+            else {
+                throw "This matrix columns != matrix 1 rows";
+            }
         }
 	
         for (r = 0; r < this.rows; r++) {
@@ -199,7 +241,7 @@ Matrix.prototype.inverse = function(){
 
         p = A.data[c][c];
 
-        for(i = 0; i < A.cols; i++) {
+        for (i = 0; i < A.cols; i++) {
             A.data[c][i] = A.data[c][i] / p;
             B.data[c][i] = B.data[c][i] / p;
         }			
@@ -288,59 +330,89 @@ Matrix.prototype.is_almost_zero = function() {
 
 //Norm of an array
 normA = function(A,p){
-	if (A instanceof Array) {
-		var a = 0;
-		for (x=0; x<A.length; x++) {
-			a += Math.pow(A[x],p);
-		}
-		return Math.pow(a,(1.0/p));
-	}
+    if (A instanceof Array) {
+        var a = 0;
+        for (x = 0; x < A.length; x++) {
+            a += Math.pow(A[x],p);
+        }
+        return Math.pow(a,(1.0/p));
+    }
 };
 
 // Runs the Cholesky decomposition on the array A
 Cholesky = function(A) {
-	if (!A.is_almost_symmetric()) {
-		throw "Is not symmetric";
-	}
+    if (!A.is_almost_symmetric()) {
+        throw "Is not symmetric";
+    }
 	
-	L = matrix_from_list(A.data);
+    L = matrix_from_list(A.data);
 	
-	for (k = 0; k < L.cols; k++) {
-		if (L.data[k][k] <= 0) {
-			throw "Not positive definite";
-		}
-		p = Math.sqrt(L.data[k][k]);
-		L.data[k][k] = Math.sqrt(L.data[k][k]);
-		for (i = k+1; i < L.rows; i++) {
-			L.data[i][k] /= p;
-		}
-		for (j = k+1; j < L.rows; j++) {
-			p = L.data[j][k];
-			for (i = k+1; i < L.rows; i++) {
-				L.data[i][j] -= p*L.data[i][k];
-			}
-		}
-	}
-	for (i = 0; i < L.rows; i++) {
-		for (j = i+1; j < L.cols; j++) {
-			L.data[i][j] = 0;
-		}
-	}
+    for (k = 0; k < L.cols; k++) {
+        if (L.data[k][k] <= 0) {
+            throw "Not positive definite";
+        }
+        p = Math.sqrt(L.data[k][k]);
+        L.data[k][k] = Math.sqrt(L.data[k][k]);
+        for (i = k+1; i < L.rows; i++) {
+            L.data[i][k] /= p;
+        }
+        for (j = k+1; j < L.rows; j++) {
+            p = L.data[j][k];
+            for (i = k+1; i < L.rows; i++) {
+                L.data[i][j] -= p*L.data[i][k];
+            }
+        }
+    }
+    for (i = 0; i < L.rows; i++) {
+        for (j = i+1; j < L.cols; j++) {
+            L.data[i][j] = 0;
+        }
+    }
 	
-	return L;
+    return L;
 }
 
 // Returns true if the matrix A is positive definite
 // Uses Cholesky(A) to determine
 is_positive_definite = function(A) {
-	if (!A.is_almost_symmetric()) {
-		return false;
-	}
-	try {
-		Cholesky(A);
-		return true;
-	}
-	catch (err) {
-		return false;
-	}
+    if (!A.is_almost_symmetric()) {
+        return false;
+    }
+
+    try {
+        Cholesky(A);
+        return true;
+    }
+    catch (err) {
+        return false;
+    }
+}
+
+// Assesses Markovitz risk/return and returns portfolio, return, and risk
+// as an array
+// Takes matrix mu, matrix A, and number risk free return
+Markovitz = function(mu, A, r_free) {
+    var x, y, temp, A_inv, portfolio_risk, portfolio_return;
+
+    x = new Matrix(A.rows, 1, 0.0);
+    temp = mu.sub(r_free);
+    A_inv = A.inverse()
+    x = A_inv.mult(temp);
+
+    y = 0;
+    for (r = 0; r < x.rows; r++) {
+        y += parseFloat(x.data[r]);
+    }
+
+    x = x.div(y);
+    portfolio = new Matrix(1, x.rows, 0.0);
+
+    for (r = 0; r < x.rows; r++) {
+        portfolio.data[0][r] = x.data[r];
+    }
+
+    portfolio_return = mu.mult(x);
+    temp = A.mult(x)
+    portfolio_risk = Math.sqrt(x.mult(temp))
+    return [portfolio, portfolio_return, portfolio_risk]
 }
