@@ -339,6 +339,67 @@ normA = function(A,p){
     }
 };
 
+//Norm of a matrix
+normM = function(A,p){
+	if (A instanceof Matrix) {
+		var x=[];
+		var y=0;
+		var z=[];
+		for (r=0;r<A.rows;r++){
+			for (c=0;c<A.cols;c++){
+				x.push(Math.pow(A.data[r][c],p));
+			}
+			y += normA(x,p);
+			z.push(y);
+		}
+		if (A.rows===1 || A.cols===1){
+			return Math.pow(y,(1.0/p));
+		}
+		else if (p===1){
+			return Math.max.apply(Math, z);;
+		}
+		else{
+			throw "Not implemented error";
+		}
+	}
+	else {
+		return Math.abs(A);
+	}
+};
+
+//Condition number
+condition_number = function(f){
+	if (f instanceof Matrix) {
+		var a = f.inverse();
+		return normM(f,1)*normM(a,1);
+	}
+	else{
+		throw "Not implemented error";
+	}
+};
+
+//Exp of a number or matrix
+exp = function(x, ap, rp, ns){
+	if (x instanceof Matrix){
+		var t = Matrix.identity(x.cols);
+		var s = t;
+		var i=0;
+		for (k=1; k< ns; k++){
+			i = x.div(k);
+			t = i.mult(t);
+			s = t.add(s)
+			if(normM(t,1)<Math.max(ap,normM(s,1)*rp)){
+				return s;
+			}
+		}
+		throw "Arithmetic Error - no convergence";
+	}
+	else{
+		return Math.exp(x);			
+	}
+};
+
+
 // Runs the Cholesky decomposition on the array A
 Cholesky = function(A) {
     if (!A.is_almost_symmetric()) {
@@ -416,3 +477,21 @@ Markovitz = function(mu, A, r_free) {
     portfolio_risk = Math.sqrt(x.mult(temp))
     return [portfolio, portfolio_return, portfolio_risk]
 }
+	
+//Solve Fixed Point 
+solve_fixed_point = function(f,x,ap,rp,ns){
+	g(x) = function(){
+		return f(x) + x;
+	}
+	Dg = D(g);
+	for (k=0; k<ns; k++){
+		if (Math.abs(Dg(x))>=1){
+			throw "error D(g)(x)>=1";
+		}
+		(x_old,x) = (x, g(x));
+		if (k>2 && normM(x_old.sub(x),1)<Math.max(ap,normM(x,1)*rp)){
+			return x;
+		}
+	throw "no convergence";
+	}
+};
