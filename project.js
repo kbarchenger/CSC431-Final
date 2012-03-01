@@ -748,6 +748,7 @@ optimize_newton_stabilized = function(f,a,b,ns){
 			a = x;
 			Dfa = Dfx;
 		}
+	}
     	throw "no convergence";
 }
 
