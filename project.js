@@ -379,9 +379,11 @@ condition_number = function(f){
 };
 
 //Exp of a number or matrix
-exp = function(x, ap, rp, ns){
+exp = function(x, ns){
+	var ap = 1e-6;
+	var rp = 1e-4;
 	if (x instanceof Matrix){
-		var t = Matrix.identity(x.cols);
+		var t = identity_matrix(x.cols);
 		var s = t;
 		var i=0;
 		for (k=1; k< ns; k++){
@@ -398,6 +400,7 @@ exp = function(x, ap, rp, ns){
 		return Math.exp(x);			
 	}
 };
+
 
 
 // Runs the Cholesky decomposition on the array A
