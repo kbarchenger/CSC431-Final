@@ -3,6 +3,9 @@
 // shared in class CSC431 at DePaul University by Massimo Di Pierro.
 
 Matrix = function(rows, cols, fill) {
+    // Default values
+    fill = fill || 0.0;
+
     var data = [];
     var a;
 	
@@ -79,7 +82,7 @@ matrix_from_list = function(l) {
 
 // Negates this matrix
 Matrix.prototype.neg = function() {
-    var n = new Matrix(this.rows, this.cols, 0);
+    var n = new Matrix(this.rows, this.cols);
     for (i = 0; i < this.rows; i++) {
         for (j = 0; j < this.cols; j++) {
             n.data[i][j] = -this.data[i][j];
@@ -98,7 +101,7 @@ Matrix.prototype.add = function(B) {
             throw "Columns don't match up";
         }
 
-        var m = new Matrix(this.rows, this.cols, 0);
+        var m = new Matrix(this.rows, this.cols);
         for (r = 0; r < this.rows; r++) {
             for (c = 0; c < this.cols; c++) {
                 m.data[r][c] = this.data[r][c] + B.data[r][c];
@@ -107,10 +110,10 @@ Matrix.prototype.add = function(B) {
         return m;
     }
     else if (typeof(B) === 'number') {
-        var m = new Matrix(this.rows, this.cols, 0);
-        for (i = 0; i < m.rows; i++) {
-            for (j = 0; j < m.cols; j++) {
-                m.data[i][j] = this.data[i][j] + B;
+        var m = new Matrix(this.rows, this.cols);
+        for (r = 0; r < m.rows; r++) {
+            for (c = 0; c < m.cols; c++) {
+                m.data[r][c] = this.data[r][c] + B;
             }
         }
         return m;
@@ -130,7 +133,7 @@ Matrix.prototype.sub = function(B) {
             throw "Columns don't match up";
         }
 
-        var m = new Matrix(this.rows, this.cols, 0);
+        var m = new Matrix(this.rows, this.cols);
 
         for (r = 0; r < this.rows; r++) {
             for (c = 0; c < this.cols; c++) {
@@ -140,10 +143,10 @@ Matrix.prototype.sub = function(B) {
         return m;
     }
     else if (typeof(B) === 'number') {
-        var m = new Matrix(this.rows, this.cols, 0);
-        for (i = 0; i < m.rows; i++) {
-            for (j = 0; j < m.cols; j++) {
-                m.data[i][j] = this.data[i][j] - B;
+        var m = new Matrix(this.rows, this.cols);
+        for (r = 0; r < m.rows; r++) {
+            for (c = 0; c < m.cols; c++) {
+                m.data[r][c] = this.data[r][c] - B;
             }
         }
         return m;
@@ -158,10 +161,9 @@ Matrix.prototype.sub = function(B) {
 // compute scalar product
 Matrix.prototype.mult = function(B){
     if (B instanceof Matrix) {
-        var m = new Matrix(this.rows, B.cols, 0);
+        var m = new Matrix(this.rows, B.cols);
 
         if (this.cols !== B.rows) {
-            // Return scalar product
             if (this.cols === 1 && B.cols === 1 && this.rows === B.rows) {
                 // Return scalar product
                 var sum = 0;
@@ -187,10 +189,10 @@ Matrix.prototype.mult = function(B){
         return m;
     }
     else if (typeof(B) === 'number') {
-        var m = new Matrix(this.rows, this.cols, 0);
-        for (i = 0; i < m.rows; i++) {
-            for (j = 0; j < m.cols; j++) {
-                m.data[i][j] = B*this.data[i][j];
+        var m = new Matrix(this.rows, this.cols);
+        for (r = 0; r < m.rows; r++) {
+            for (c = 0; c < m.cols; c++) {
+                m.data[r][c] = B*this.data[r][c];
             }
         }
         return m;
@@ -202,7 +204,7 @@ Matrix.prototype.mult = function(B){
 
 // Computes this / B for B a matrix or scalar
 Matrix.prototype.div = function(B) {
-    var m = new Matrix(this.rows, this.cols, 0);
+    var m = new Matrix(this.rows, this.cols);
 
     if (B instanceof Matrix) {
         // Matrix/Matrix
@@ -262,7 +264,7 @@ Matrix.prototype.inverse = function(){
 
 // Swap row i with row j in this matrix
 Matrix.prototype.swap_rows = function(i, j) {
-    var m = new Matrix(this.rows, this.cols, 0);
+    var m = new Matrix(this.rows, this.cols);
 	
     for (r = 0; r < m.rows; r++) {
         if (r === i) {
@@ -281,7 +283,7 @@ Matrix.prototype.swap_rows = function(i, j) {
 
 // Transpose this matrix
 Matrix.prototype.transpose = function() {
-    var m = new Matrix(this.cols, this.rows,0);
+    var m = new Matrix(this.cols, this.rows);
 
     for (c = 0; c < this.cols; c++) {
         for (r = 0; r < this.rows; r++) {
@@ -293,11 +295,12 @@ Matrix.prototype.transpose = function() {
 }
 
 // Returns true if this matrix is almost symmetric
-Matrix.prototype.is_almost_symmetric = function() {
+Matrix.prototype.is_almost_symmetric = function(ap, rp) {
     if (this.rows !== this.cols) { return false; }
 	
-    var ap = 1e-6;
-    var rp = 1e-4;
+    // Default values
+    ap = ap || 1e-6;
+    rp = rp || 1e-4;
 	
     for (r = 0; r < this.rows; r++) {
         for (c = 0; c < this.rows; c++) {
@@ -312,9 +315,10 @@ Matrix.prototype.is_almost_symmetric = function() {
 }
 
 // Returns true if this matrix is almost zero
-Matrix.prototype.is_almost_zero = function() {
-    var ap = 1e-6;
-    var rp = 1e-4;
+Matrix.prototype.is_almost_zero = function(ap, rp) {
+    // Default values
+    ap = ap || 1e-6;
+    rp = rp || 1e-4;
 
     for (r = 0; r < this.rows; r++) {
         for (c = 0; c < this.cols; c++) {
@@ -328,8 +332,8 @@ Matrix.prototype.is_almost_zero = function() {
     return true;
 }
 
-//Norm of an array
-normA = function(A,p){
+// Finds the p-norm of a matrix or array
+norm = function(A, p) {
     if (A instanceof Array) {
         var a = 0;
         for (x = 0; x < A.length; x++) {
@@ -337,71 +341,67 @@ normA = function(A,p){
         }
         return Math.pow(a,(1.0/p));
     }
+    else if (A instanceof Matrix) {
+        var x = [];
+        var y = 0;
+        var z = [];
+        for (r = 0; r < A.rows; r++) {
+            for (c = 0; c < A.cols; c++) {
+                x.push(Math.pow(A.data[r][c], p));
+            }
+            y += norm(x,p);
+            z.push(y);
+        }
+        if (A.rows === 1 || A.cols === 1){
+            return Math.pow(y, (1.0/p));
+        }
+        else if (p === 1) {
+            return Math.max.apply(Math, z);;
+        }
+        else {
+            throw "Not implemented error";
+        }
+    }
+    else {
+        return Math.abs(A);
+    }
 };
 
-//Norm of a matrix
-normM = function(A,p){
-	if (A instanceof Matrix) {
-		var x=[];
-		var y=0;
-		var z=[];
-		for (r=0;r<A.rows;r++){
-			for (c=0;c<A.cols;c++){
-				x.push(Math.pow(A.data[r][c],p));
-			}
-			y += normA(x,p);
-			z.push(y);
-		}
-		if (A.rows===1 || A.cols===1){
-			return Math.pow(y,(1.0/p));
-		}
-		else if (p===1){
-			return Math.max.apply(Math, z);;
-		}
-		else{
-			throw "Not implemented error";
-		}
-	}
-	else {
-		return Math.abs(A);
-	}
+// Condition number
+condition_number = function(f) {
+    if (f instanceof Matrix) {
+        var a = f.inverse();
+        return norm(f,1) * norm(a,1);
+    }
+    else {
+        throw "Not implemented error";
+    }
 };
 
-//Condition number
-condition_number = function(f){
-	if (f instanceof Matrix) {
-		var a = f.inverse();
-		return normM(f,1)*normM(a,1);
-	}
-	else{
-		throw "Not implemented error";
-	}
+// Computes the exp of a number or matrix x
+exp = function(x, ns, ap, rp){
+    // Default values
+    ap = ap || 1e-6;
+    rp = rp || 1e-4;
+
+    if (x instanceof Matrix) {
+        var t = identity_matrix(x.cols);
+        var s = t;
+        var i = 0;
+        for (k = 1; k < ns; k++) {
+            i = x.div(k);
+            t = i.mult(t);
+            s = t.add(s)
+            if(norm(t,1) < Math.max(ap, norm(s,1)*rp)){
+                return s;
+            }
+        }
+        throw "Arithmetic Error - no convergence";
+    }
+    else {
+        return Math.exp(x);
+    }
 };
-
-//Exp of a number or matrix
-exp = function(x, ns){
-	var ap = 1e-6;
-	var rp = 1e-4;
-	if (x instanceof Matrix){
-		var t = identity_matrix(x.cols);
-		var s = t;
-		var i=0;
-		for (k=1; k< ns; k++){
-			i = x.div(k);
-			t = i.mult(t);
-			s = t.add(s)
-			if(normM(t,1)<Math.max(ap,normM(s,1)*rp)){
-				return s;
-			}
-		}
-		throw "Arithmetic Error - no convergence";
-	}
-	else{
-		return Math.exp(x);			
-	}
-};
-
-
 
 // Runs the Cholesky decomposition on the array A
 Cholesky = function(A) {
@@ -458,7 +458,7 @@ is_positive_definite = function(A) {
 Markovitz = function(mu, A, r_free) {
     var x, y, temp, A_inv, portfolio_risk, portfolio_return;
 
-    x = new Matrix(A.rows, 1, 0.0);
+    x = new Matrix(A.rows, 1);
     temp = mu.sub(r_free);
     A_inv = A.inverse()
     x = A_inv.mult(temp);
@@ -469,7 +469,7 @@ Markovitz = function(mu, A, r_free) {
     }
 
     x = x.div(y);
-    portfolio = new Matrix(1, x.rows, 0.0);
+    portfolio = new Matrix(1, x.rows);
 
     for (r = 0; r < x.rows; r++) {
         portfolio.data[0][r] = x.data[r];
@@ -481,311 +481,333 @@ Markovitz = function(mu, A, r_free) {
     return [portfolio, portfolio_return, portfolio_risk]
 }
 
-//1st Derivative
-D = function(f,x){
-	var h = 1e-6;
-	return (f(x+h)-f(x-h))/2/h;
+// 1st Derivative
+D = function(f, x, h){
+    h = h || 1e-6;
+    return (f(x+h) - f(x-h)) / 2 / h;
 }
 
 
-//2nd Derivative
-DD = function(f,x){
-	var h = 1e-6;
-	return (f(x+h)-2.0*f(x)+f(x-h))/(h*h);
+// 2nd Derivative
+DD = function(f, x, h){
+    h = h || 1e-6;
+    return (f(x+h) - 2.0*f(x) + f(x-h)) / (h*h);
 }
 
-//Solve Fixed Point 
-solve_fixed_point = function(f,x,ns){
-	var ap = 1e-6;
-	var rp = 1e-4;
-	for (k=0; k<ns; k++){
-		if (Math.abs(D(g,x))>=1){
-			throw "error D(g)(x)>=1";
-		}
-		var x_old = x;
-		var x = g(x);		
-		if (k>2 && normA(x_old-x,1)<Math.max(ap,normA(x,1)*rp)){
-			return x;
-		}
-	}
-	throw "no convergence";
+// Solve Fixed Point
+solve_fixed_point = function(f,x,ns, ap, rp){
+    // Default values
+    ap = ap || 1e-6;
+    rp = rp || 1e-4;
+
+    for (k=0; k<ns; k++){
+        if (Math.abs(D(g, x)) >= 1) {
+            throw "error D(g)(x) >= 1";
+        }
+        var x_old = x;
+        var x = g(x);
+        if (k > 2 && norm(x_old-x, 1) < Math.max(ap, norm(x,1)*rp)) {
+            return x;
+        }
+    }
+    throw "no convergence";
 };
 
 
-//Solve Bisection
-solve_bisection = function(f,a,b,ns){
-	var ap = 1e-6;
-	var rp = 1e-4;
-	var fa = f(a);
-	var fb = f(b);
-	if(fa===0){
-		return a;
-	}
-	if(fb===0){
-		return b;
-	}
-	if(fa*fb>0){
-		throw "f(a) and f(b) must have opposite sign";
-	}
-	for (k=0; k<ns; k++){
-		x= (a+b)/2;
-		fx = f(x);
-		if(fx===0 || normA(b-a,1)<Math.max(ap,normA(x,1)*rp)){
-			return x;
-		}
-		else if(fx*fa<0){
-			b = x;
-			fb = fx;
-		}
-		else{
-			a = x;
-			fa = fx;
-		}
-	}	
+// Solve Bisection
+solve_bisection = function(f, a, b, ns, ap, rp){
+    // Default values
+    ap = ap || 1e-6;
+    rp = rp || 1e-4;
+
+    var fa = f(a);
+    var fb = f(b);
+    if (fa === 0) {
+        return a;
+    }
+    if (fb === 0) {
+        return b;
+    }
+    if (fa*fb > 0) {
+        throw "f(a) and f(b) must have opposite sign";
+    }
+    for (k = 0; k < ns; k++) {
+        x = (a+b)/2;
+        fx = f(x);
+        if (fx === 0 || norm(b-a,1) < Math.max(ap, norm(x,1)*rp)){
+            return x;
+        }
+        else if (fx*fa < 0){
+            b = x;
+            fb = fx;
+        }
+        else {
+            a = x;
+            fa = fx;
+        }
+    }
     throw "no convergence";
 }
 
 
-//Solve Newton
-solve_newton = function(f,x,ns){
-	var ap = 1e-6;
-	var rp = 1e-4;
-	for(k=0; k<ns; k++){
-		fx = f(x);
-		Dfx = D(f,x);
-		if(normA(Dfx,1)<ap){
-			throw "unstable solution";
-		}
-		var x_old = x;
-		var x = g(x);		
-		if (k>2 && normA(x_old-x,1)<Math.max(ap,normA(x,1)*rp)){
-			return x;
-		}
-	}
-	throw "no convergence";
+// Solve Newton
+solve_newton = function(f, x, ns, ap, rp) {
+    // Default values
+    ap = ap || 1e-6;
+    rp = rp || 1e-4;
+
+    for (k = 0; k < ns; k++) {
+        fx = f(x);
+        Dfx = D(f, x);
+        if (norm(Dfx, 1) < ap) {
+            throw "unstable solution";
+        }
+        var x_old = x;
+        var x = g(x);
+        if (k > 2 && norm(x_old-x,1) < Math.max(ap, norm(x,1)*rp)) {
+            return x;
+        }
+    }
+    throw "no convergence";
 }
 
-//Solve secant
-solve_secant = function(f,x,ns){
-	var ap = 1e-6;
-	var rp = 1e-4;
-	fx = f(x);
-	Dfx = D(f,x);
-	for(k=0; k<ns; k++){
-		if(normA(Dfx)<ap){
-			throw "unstable solution";
-		}
-		x_old = x;
-		fx_old = fx;
-		x = x-fx/Dfx;
-		if (k>2 && normA(x_old-x,1)<Math.max(ap,normA(x,1)*rp)){
-			return x;
-		}
-		fx = f(x);
-		Dfx = (fx-fx_old)/(x-x_old)
-	}
+// Solve secant
+solve_secant = function(f, x, ns, ap, rp) {
+    // Default values
+    ap = ap || 1e-6;
+    rp = rp || 1e-4;
+
+    fx = f(x);
+    Dfx = D(f,x);
+    for (k = 0; k < ns; k++) {
+        if (norm(Dfx) < ap) {
+            throw "unstable solution";
+        }
+        x_old = x;
+        fx_old = fx;
+        x = x - fx/Dfx;
+        if (k > 2 && norm(x_old-x, 1) < Math.max(ap, norm(x,1)*rp)) {
+            return x;
+        }
+        fx = f(x);
+        Dfx = (fx-fx_old) / (x-x_old)
+    }
     throw "no convergence"
 }
 
 //Solve Newton Stabilized
-solve_newton_stabilized = function(f,a,b,ns){
-	var ap = 1e-6;
-	var rp = 1e-4;
-	fa = f(a);
-	fb = f(b);
-	if(fa===0){
-		return a;
-	}
-	if(fb===0){
-		return b;
-	}	
-	if(fa*fb>0){
-		throw "f(a) and f(b) must have opposite sign";
-	}
-	x= (a+b)/2;
-	fx = f(x);
-	Dfx = D(f,x);
-	for(k=0; k<ns; k++){
-		x_old = x;
-		fx_old = fx;
-		if(normA(Dfx,1)>ap){
-			x = x-fx/Dfx;
-		}
-		if(x==x_old || x<a || x>b){
-			x = (a+b)/2;
-		}
-		fx = f(x);
-		if(fx===0 || normA(x-x_old)<Math.max(ap,normA(x,1)*rp)){
-			return x;
-		}
-		Dfx = (fx-fx_old)/(x-x_old)
-		if(fx*fa<0){
-			b = x;
-			fb = fx;
-		}
-        	else{
-			a = x;
-			fa = fx;
-		}
-	}
-	throw "no convergence";
+solve_newton_stabilized = function(f, a, b, ns, ap, rp) {
+    // Default values
+    ap = ap || 1e-6;
+    rp = rp || 1e-4;
+
+    fa = f(a);
+    fb = f(b);
+    if (fa === 0){
+        return a;
+    }
+    if (fb === 0){
+        return b;
+    }
+    if (fa*fb > 0) {
+        throw "f(a) and f(b) must have opposite sign";
+    }
+    x = (a+b)/2;
+    fx = f(x);
+    Dfx = D(f,x);
+    for (k = 0; k < ns; k++) {
+        x_old = x;
+        fx_old = fx;
+        if (norm(Dfx,1) > ap) {
+            x = x - fx/Dfx;
+        }
+        if (x === x_old || x < a || x > b) {
+            x = (a+b)/2;
+        }
+        fx = f(x);
+        if (fx === 0 || norm(x-x_old) < Math.max(ap, norm(x,1)*rp)) {
+            return x;
+        }
+        Dfx = (fx-fx_old) / (x-x_old)
+        if (fx*fa < 0) {
+            b = x;
+            fb = fx;
+        }
+        else {
+            a = x;
+            fa = fx;
+        }
+    }
+    throw "no convergence";
 }
 
 
 //Optimize bisection
-optimize_bisection = function(f,a,b,ns){
-	var ap = 1e-6;
-	var rp = 1e-4;
-	Dfa = D(f,a);
-	Dfb = D(f,b);
-	if(Dfa===0){
-		return a;
-	}
-	if(Dfb===0){
-		return b;
-	}
-	if(Dfa*Dfb>0){
-		throw "D(f)(a) and D(f)(b) must have opposite sign";
-	}
-	for(k=0; k<ns; k++){
-		x = (a+b)/2
-       		Dfx = D(f,x)
-        	if(Dfx===0 || normA(b-a)<Math.max(ap,normA(x,1)*rp)){
-			return x
-		}
-		else if(Dfx * Dfa < 0){
-			b = x;
-			Dfb = Dfx;
-		}
-        	else{
-			a = x;
-			Dfa = Dfx; 
-		}
-	}
-    	throw 'no convergence';
+optimize_bisection = function(f,a,b,ns, ap, rp) {
+    // Default values
+    ap = ap || 1e-6;
+    rp = rp || 1e-4;
+
+    Dfa = D(f,a);
+    Dfb = D(f,b);
+    if (Dfa === 0) {
+        return a;
+    }
+    if (Dfb === 0) {
+        return b;
+    }
+    if (Dfa*Dfb > 0) {
+        throw "D(f)(a) and D(f)(b) must have opposite sign";
+    }
+    for (k = 0; k < ns; k++) {
+        x = (a+b)/2;
+        Dfx = D(f,x);
+        if (Dfx === 0 || norm(b-a) < Math.max(ap, norm(x,1)*rp)) {
+            return x;
+        }
+        else if (Dfx * Dfa < 0) {
+            b = x;
+            Dfb = Dfx;
+        }
+        else {
+            a = x;
+            Dfa = Dfx;
+        }
+    }
+    throw 'no convergence';
 }
 
 
-//Optimize Newton
-optimize_newton = function(f,x,ns){
-	var ap = 1e-6;
-	var rp = 1e-4;
-	for(k=0; k<ns; k++){
-		Dfx = D(f,x);
-		DDfx = DD(f,x);
-		if(Dfx===0){
-			return x;
-		}
-		if(normA(DDfx)<ap){
-			throw "unstable solution";
-		}
-		if(normA(x-x_old)<Math.max(ap,normA(x,1)*rp)){
-			return x;
-		}
-	}
-	throw "no convergence";
+// Optimize Newton
+optimize_newton = function(f, x, ns, ap, rp) {
+    // Default values
+    ap = ap || 1e-6;
+    rp = rp || 1e-4;
+
+    for (k = 0; k < ns; k++) {
+        Dfx = D(f,x);
+        DDfx = DD(f,x);
+        if (Dfx === 0) {
+            return x;
+        }
+        if (norm(DDfx) < ap) {
+            throw "unstable solution";
+        }
+        if (norm(x-x_old) < Math.max(ap, norm(x,1)*rp)) {
+            return x;
+        }
+    }
+    throw "no convergence";
 }
 
-//Optimize Secant
-optimize_secant = function(f,x,ns){
-	var ap = 1e-6;
-	var rp = 1e-4;	
-	fx = f(x);
-	Dfx = D(f,x);
-	DDfx = DD(f,x);
-	for(k=0; k<ns; k++){
-		if(Dfx===0){
-			return x;
-		}
-		if(normA(DDfx)<ap){
-			throw "unstable solution";
-		}
-		x_old = x;
-		Dfx_old = Dfx;
-		x = x-Dfx/DDfx;		
-		if(normA(x-x_old)<Math.max(ap,normA(x,1)*rp)){
-			return x;
-		}
-		fx = f(x);
-		Dfx = D(f,x);
-		DDfx = (Dfx - Dfx_old)/(x-x_old);
-	}
-	throw " no convergence";
+// Optimize Secant
+optimize_secant = function(f, x, ns, ap, rp) {
+    // Default values
+    ap = ap || 1e-6;
+    rp = rp || 1e-4;
+
+    fx = f(x);
+    Dfx = D(f,x);
+    DDfx = DD(f,x);
+    for (k = 0; k < ns; k++) {
+        if (Dfx === 0) {
+            return x;
+        }
+        if (norm(DDfx) < ap) {
+            throw "unstable solution";
+        }
+
+        x_old = x;
+        Dfx_old = Dfx;
+        x = x - Dfx/DDfx;
+        if (norm(x-x_old) < Math.max(ap, norm(x,1)*rp)) {
+            return x;
+        }
+        fx = f(x);
+        Dfx = D(f,x);
+        DDfx = (Dfx - Dfx_old) / (x - x_old);
+    }
+    throw "no convergence";
 }
 
-//Optimize Newton Stabilized
-optimize_newton_stabilized = function(f,a,b,ns){
-	var ap = 1e-6;
-	var rp = 1e-4;	
-	if(Dfa===0){
-		return a;
-	}
-	if(Dfb===0){
-		return b;
-	}
-	if(Dfa*Dfb>0){
-		throw "D(f)(a) and D(f)(b) must have opposite sign";
-	}
-	x = (a+b)/2;	
-	fx = f(x);
-	Dfx  = D(f,x);
-	DDfx = DD(f,x);
-	for(k=0; k<ns; k++){
-		if(Dfx===0){
-			return x;
-		}
-		x_old = x;
-		fx_old = fx;
-		Dfx_old = Dfx;
-		if(normA(x-x_old)<Math.max(ap,normA(x,1)*rp)){
-			return x;
-		}
-	 	fx = f(x)
-        	Dfx = (fx-fx_old)/(x-x_old)
-       	 	DDfx = (Dfx-Dfx_old)/(x-x_old)
-        	if (Dfx * Dfa < 0){
-			b = x;
-			Dfb = Dfx;
-		}
-        	else{
-			a = x;
-			Dfa = Dfx;
-		}
-	}
-    	throw "no convergence";
+// Optimize Newton Stabilized
+optimize_newton_stabilized = function(f, a, b, ns, ap, rp) {
+    // Default values
+    ap = ap || 1e-6;
+    rp = rp || 1e-4;
+
+    if (Dfa === 0) {
+        return a;
+    }
+    if (Dfb === 0) {
+        return b;
+    }
+    if (Dfa*Dfb > 0) {
+        throw "D(f)(a) and D(f)(b) must have opposite sign";
+    }
+
+    x = (a+b)/2;
+    fx = f(x);
+    Dfx  = D(f,x);
+    DDfx = DD(f,x);
+    for (k = 0; k < ns; k++) {
+        if (Dfx === 0) {
+            return x;
+        }
+        x_old = x;
+        fx_old = fx;
+        Dfx_old = Dfx;
+        if (norm(x-x_old) < Math.max(ap, norm(x,1)*rp)) {
+            return x;
+        }
+        fx = f(x)
+        Dfx = (fx-fx_old) / (x-x_old)
+        DDfx = (Dfx-Dfx_old) / (x-x_old)
+        if (Dfx * Dfa < 0) {
+            b = x;
+            Dfb = Dfx;
+        }
+        else {
+            a = x;
+            Dfa = Dfx;
+        }
+    }
+    throw "no convergence";
 }
 
-//Optimize Golden Search
-optimize_golden_search = function(f,a,b,ns){
-	var ap = 1e-6;
-	var rp = 1e-4;	
-	tau = (Math.sqrt(5)-1)/2;
-	x1 = a+(1-tau)*(b-a);
-	x2 = a+tau*(b-a);
-	fa = f(a);
-	f1 = f(x1);
-	fb = f(b);
-	f2 = f(x2);
-	for(k=0; k<ns; k++){
-		if(f1>f2){
-			a = x1;
-			fa = f1;
-			x1 = x2;
-			f1 = f2;
-			x2 = a+tau*(b-a);
-			f2 = f(x2);
-		}
-		else{
-			b = x2;
-			fb = f2;
-			x2 = x1;
-			f2 = f1;
-			x1 = a+(1-tau)*(b-a);
-			f1 = f(x1);
-		}
-		if(k>2 && normA(b-a,1)<Math.max(ap,normA(b,1)*rp)){
-			return b;
-		}
-	}
-    	throw "no convergence";
+// Optimize Golden Search
+optimize_golden_search = function(f, a, b, ns, ap, rp) {
+    // Default values
+    ap = ap || 1e-6;
+    rp = rp || 1e-4;
+
+    tau = (Math.sqrt(5) - 1)/2;
+    x1 = a + (1-tau)*(b-a);
+    x2 = a + tau*(b-a);
+    fa = f(a);
+    f1 = f(x1);
+    fb = f(b);
+    f2 = f(x2);
+    for (k = 0; k < ns; k++) {
+        if (f1 > f2) {
+            a = x1;
+            fa = f1;
+            x1 = x2;
+            f1 = f2;
+            x2 = a + tau*(b-a);
+            f2 = f(x2);
+        }
+        else {
+            b = x2;
+            fb = f2;
+            x2 = x1;
+            f2 = f1;
+            x1 = a + (1-tau)*(b-a);
+            f1 = f(x1);
+        }
+        if (k > 2 && norm(b-a, 1) < Math.max(ap, norm(b,1)*rp)) {
+            return b;
+        }
+    }
+    throw "no convergence";
 }

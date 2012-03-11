@@ -109,64 +109,79 @@ test1 = function() {
         console.log('AG risk: ' + AG_risk);
         console.log('AG return: ' + AG_return);
 
-    //Testing Norm
-var AH = normA([1,2,3,4],2);
-console.log('Norm of AH = ' + AH);
-var AI = normM(N,1);
-console.log('Norm of N = ' + AI);
+        // Testing Norm
+        var AH = normA([1,2,3,4], 2);
+        console.log('Norm of AH = ' + AH);
+        var AI = normM(N,1);
+        console.log('Norm of N = ' + AI);
 
-//Testing condition number
-var AJ = new Matrix(2,2,[1,2,3,4]);
-var AK = condition_number(AJ);
-console.log("Condition number of AJ = " + AK);
+        // Testing condition number
+        var AJ = new Matrix(2, 2, [1,2,3,4]);
+        var AK = condition_number(AJ);
+        console.log("Condition number of AJ = " + AK);
 
-//Testing exp
-var AL = exp(3);
-console.log("exp(3) = " + AL);
-var AM = exp(F, 100);
-console.log("exp(F) =");
-print_matrix(AM);
+        // Testing exp
+        var AL = exp(3);
+        console.log("exp(3) = " + AL);
+        var AM = exp(F, 100);
+        console.log("exp(F) =");
+        print_matrix(AM);
 
-//Define function f(x)
-f = function(x){
-return Math.sin(Math.cos(Math.pow(x,2))) - x;
+    }
+    catch(err) {
+        alert(err);
+    }
 }
 
-//Define function g(x)
-g = function(x){
-return Math.sin(Math.cos(Math.pow(x,2)));
-}
+// Test of solvers and optimizers
+test2 = function() {
+    try {
+        // Define function f(x)
+        f = function(x){
+            return Math.sin(Math.cos(Math.pow(x,2))) - x;
+        }
 
-//Testing solve_fixed_point
-//console.log("Fixed Point: x = " + solve_fixed_point(f, 0.5, 100));
+        // Define function g(x)
+        g = function(x){
+            return Math.sin(Math.cos(Math.pow(x,2)));
+        }
 
-//Testing solve_bisection
-console.log("Bisection method: x = " + solve_bisection(f,0.5,1, 100));
+        // Testing solve_fixed_point
+        //console.log("Fixed Point: x = " + solve_fixed_point(f, 0.5, 100));
 
-//Testing solve_newton
-//console.log("Newton: x = " + solve_newton(f, 0.5, 100));
+        // Testing solve_bisection
+        console.log("Bisection method: x = " +
+                    solve_bisection(f, 0.5, 1, 100));
 
-//Testing solve_secant
-//console.log("Secant: x = " + solve_secant((f, 0.5, 100));
+        // Testing solve_newton
+        //console.log("Newton: x = " + solve_newton(f, 0.5, 100));
 
-//Testing solve_newton_stabilized
-console.log("Newton Stabilized: x = " + solve_newton_stabilized(f,0.5,1, 100));
+        // Testing solve_secant
+        //console.log("Secant: x = " + solve_secant((f, 0.5, 100));
 
-//Testing optimize_bisection
-//console.log("Optimize Bisection: x = " + optimize_bisection(f,0.5,1, 100));
+        // Testing solve_newton_stabilized
+        console.log("Newton Stabilized: x = " +
+                    solve_newton_stabilized(f, 0.5, 1, 100));
 
-//Testing optimize_newton
-//console.log("Optimize Newton: x = " + optimize_newton(f, 0.5, 100));
+        // Testing optimize_bisection
+        //console.log("Optimize Bisection: x = " +
+        //            optimize_bisection(f, 0.5, 1, 100));
 
-//Testing optimize_secant
-//console.log("Optimze Secant: x = " + optimize_secant(f, 0.5, 100));
+        // Testing optimize_newton
+        //console.log("Optimize Newton: x = " +
+        //            optimize_newton(f, 0.5, 100));
 
-//Testing optimize_newton_stabilized
-//console.log("Optimize Newton Stabilized: x = " + optimize_newton_stabilized(f,0.5,1, 100));
+        // Testing optimize_secant
+        //console.log("Optimze Secant: x = " +
+        //            optimize_secant(f, 0.5, 100));
 
-//Testing optimize_golden_search
-//console.log("Optimize Golden Search: x = " + optimize_golden_search(f,0.5,1, 100));
+        // Testing optimize_newton_stabilized
+        //console.log("Optimize Newton Stabilized: x = " +
+        //            optimize_newton_stabilized(f, 0.5, 1, 100));
 
+        // Testing optimize_golden_search
+        //console.log("Optimize Golden Search: x = " +
+        //            optimize_golden_search(f, 0.5, 1, 100));
 
 
     }
@@ -176,6 +191,7 @@ console.log("Newton Stabilized: x = " + solve_newton_stabilized(f,0.5,1, 100));
 }
 
 test1();
+test2();
 
 </script>
 </head>
