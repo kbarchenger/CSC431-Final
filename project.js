@@ -385,8 +385,7 @@ condition_number = function(f,x,h) {
 	}
     if (f instanceof Matrix) {
         var a = f.inverse();
-       		console.log("normF " + norm(f) + " normA " + norm(a));
-	 	return norm(f,1) * norm(a,1);
+	 	return norm(f) * norm(a);
     }
     else {
         throw "Not implemented error";
@@ -633,7 +632,7 @@ solve_newton_stabilized = function(f, a, b, ns, ap, rp) {
     for (k = 0; k < ns; k++) {
         x_old = x;
         fx_old = fx;
-        if (norm(Dfx,1) > ap) {
+        if (norm(Dfx) > ap) {
             x = x - fx/Dfx;
         }
         if (x === x_old || x < a || x > b) {
@@ -710,7 +709,7 @@ optimize_newton = function(f, x, ns, ap, rp) {
         }
 		x_old = x;
 		x = x-Dfx/DDfx;
-        if (norm(x-x_old) < Math.max(ap, norm(x,1)*rp)) {
+        if (norm(x-x_old) < Math.max(ap, norm(x)*rp)) {
             return x;
         }
     }
@@ -783,7 +782,7 @@ optimize_newton_stabilized = function(f, a, b, ns, ap, rp) {
 		if (x===x_old || x<a || x>b){
 			x = (a+b)/2;
 		}
-        if (norm(x-x_old) < Math.max(ap, norm(x,1)*rp)) {
+        if (norm(x-x_old) < Math.max(ap, norm(x)*rp)) {
             return x;
         }
         fx = f(x)
