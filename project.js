@@ -345,17 +345,23 @@ norm = function(A, p) {
         var x = [];
         var y = 0;
         var z = [];
-        for (r = 0; r < A.rows; r++) {
-            for (c = 0; c < A.cols; c++) {
-                x.push(Math.pow(A.data[r][c], p));
-            }
-            y += norm(x,p);
-            z.push(y);
-        }
         if (A.rows === 1 || A.cols === 1){
+	    for (r = 0; r < A.rows; r++) {
+            	for (c = 0; c < A.cols; c++) {
+                    x.push(Math.pow(A.data[r][c], p));
+           	}
+	    }
+            y += norm(x,p);
             return Math.pow(y, (1.0/p));
         }
         else if (p === 1) {
+            for (c=0; c<A.cols; c++){
+		var sumCol=0;
+        	for (r=0; r<A.rows; r++){
+        	    sumCol+=A.data[r][c];
+        	}
+        	z.push(sumCol);
+            }
             return Math.max.apply(Math, z);;
         }
         else {
