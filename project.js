@@ -334,6 +334,8 @@ Matrix.prototype.is_almost_zero = function(ap, rp) {
 
 // Finds the p-norm of a matrix or array
 norm = function(A, p) {
+    //Default p value
+    p = p || 1;
     if (A instanceof Array) {
         var a = 0;
         for (x = 0; x < A.length; x++) {
@@ -358,7 +360,7 @@ norm = function(A, p) {
             for (c=0; c<A.cols; c++){
 		var sumCol=0;
         	for (r=0; r<A.rows; r++){
-        	    sumCol+=A.data[r][c];
+        	    sumCol+=Math.abs(A.data[r][c]);
         	}
         	z.push(sumCol);
             }
@@ -374,10 +376,16 @@ norm = function(A, p) {
 };
 
 // Condition number
-condition_number = function(f) {
+condition_number = function(f,x,h) {
+	x = x || "None";
+	h = h || 1e-6;
+
+	if (typeof(f)=== "function"){
+		return D(f,x,h)*x/f(x)
+	}
     if (f instanceof Matrix) {
         var a = f.inverse();
-        return norm(f,1) * norm(a,1);
+	 	return norm(f) * norm(a);
     }
     else {
         throw "Not implemented error";
@@ -398,7 +406,7 @@ exp = function(x, ns, ap, rp){
             i = x.div(k);
             t = i.mult(t);
             s = t.add(s)
-            if(norm(t,1) < Math.max(ap, norm(s,1)*rp)){
+            if(norm(t) < Math.max(ap, norm(s)*rp)){
                 return s;
             }
         }
@@ -512,7 +520,7 @@ solve_fixed_point = function(f,x,ns, ap, rp){
         }
         var x_old = x;
         var x = g(x);
-        if (k > 2 && norm(x_old-x, 1) < Math.max(ap, norm(x,1)*rp)) {
+        if (k > 2 && norm(x_old-x) < Math.max(ap, norm(x)*rp)) {
             return x;
         }
     }
@@ -540,7 +548,7 @@ solve_bisection = function(f, a, b, ns, ap, rp){
     for (k = 0; k < ns; k++) {
         x = (a+b)/2;
         fx = f(x);
-        if (fx === 0 || norm(b-a,1) < Math.max(ap, norm(x,1)*rp)){
+        if (fx === 0 || norm(b-a) < Math.max(ap, norm(x)*rp)){
             return x;
         }
         else if (fx*fa < 0){
@@ -565,12 +573,12 @@ solve_newton = function(f, x, ns, ap, rp) {
     for (k = 0; k < ns; k++) {
         fx = f(x);
         Dfx = D(f, x);
-        if (norm(Dfx, 1) < ap) {
+        if (norm(Dfx) < ap) {
             throw "unstable solution";
         }
         var x_old = x;
         var x = g(x);
-        if (k > 2 && norm(x_old-x,1) < Math.max(ap, norm(x,1)*rp)) {
+        if (k > 2 && norm(x_old-x) < Math.max(ap, norm(x)*rp)) {
             return x;
         }
     }
@@ -592,7 +600,7 @@ solve_secant = function(f, x, ns, ap, rp) {
         x_old = x;
         fx_old = fx;
         x = x - fx/Dfx;
-        if (k > 2 && norm(x_old-x, 1) < Math.max(ap, norm(x,1)*rp)) {
+        if (k > 2 && norm(x_old-x) < Math.max(ap, norm(x)*rp)) {
             return x;
         }
         fx = f(x);
@@ -624,14 +632,14 @@ solve_newton_stabilized = function(f, a, b, ns, ap, rp) {
     for (k = 0; k < ns; k++) {
         x_old = x;
         fx_old = fx;
-        if (norm(Dfx,1) > ap) {
+        if (norm(Dfx) > ap) {
             x = x - fx/Dfx;
         }
         if (x === x_old || x < a || x > b) {
             x = (a+b)/2;
         }
         fx = f(x);
-        if (fx === 0 || norm(x-x_old) < Math.max(ap, norm(x,1)*rp)) {
+        if (fx === 0 || norm(x-x_old) < Math.max(ap, norm(x)*rp)) {
             return x;
         }
         Dfx = (fx-fx_old) / (x-x_old)
@@ -668,7 +676,7 @@ optimize_bisection = function(f,a,b,ns, ap, rp) {
     for (k = 0; k < ns; k++) {
         x = (a+b)/2;
         Dfx = D(f,x);
-        if (Dfx === 0 || norm(b-a) < Math.max(ap, norm(x,1)*rp)) {
+        if (Dfx === 0 || norm(b-a) < Math.max(ap, norm(x)*rp)) {
             return x;
         }
         else if (Dfx * Dfa < 0) {
@@ -699,7 +707,9 @@ optimize_newton = function(f, x, ns, ap, rp) {
         if (norm(DDfx) < ap) {
             throw "unstable solution";
         }
-        if (norm(x-x_old) < Math.max(ap, norm(x,1)*rp)) {
+		x_old = x;
+		x = x-Dfx/DDfx;
+        if (norm(x-x_old) < Math.max(ap, norm(x)*rp)) {
             return x;
         }
     }
@@ -726,7 +736,7 @@ optimize_secant = function(f, x, ns, ap, rp) {
         x_old = x;
         Dfx_old = Dfx;
         x = x - Dfx/DDfx;
-        if (norm(x-x_old) < Math.max(ap, norm(x,1)*rp)) {
+        if (norm(x-x_old) < Math.max(ap, norm(x)*rp)) {
             return x;
         }
         fx = f(x);
@@ -741,6 +751,9 @@ optimize_newton_stabilized = function(f, a, b, ns, ap, rp) {
     // Default values
     ap = ap || 1e-6;
     rp = rp || 1e-4;
+	
+	Dfa = D(f,a);
+	Dfb = D(f,b);
 
     if (Dfa === 0) {
         return a;
@@ -754,7 +767,7 @@ optimize_newton_stabilized = function(f, a, b, ns, ap, rp) {
 
     x = (a+b)/2;
     fx = f(x);
-    Dfx  = D(f,x);
+    Dfx = D(f,x);
     DDfx = DD(f,x);
     for (k = 0; k < ns; k++) {
         if (Dfx === 0) {
@@ -763,7 +776,13 @@ optimize_newton_stabilized = function(f, a, b, ns, ap, rp) {
         x_old = x;
         fx_old = fx;
         Dfx_old = Dfx;
-        if (norm(x-x_old) < Math.max(ap, norm(x,1)*rp)) {
+		if(norm(DDfx>ap)){
+			x = x -Dfx/DDfx;
+		}
+		if (x===x_old || x<a || x>b){
+			x = (a+b)/2;
+		}
+        if (norm(x-x_old) < Math.max(ap, norm(x)*rp)) {
             return x;
         }
         fx = f(x)
@@ -811,7 +830,7 @@ optimize_golden_search = function(f, a, b, ns, ap, rp) {
             x1 = a + (1-tau)*(b-a);
             f1 = f(x1);
         }
-        if (k > 2 && norm(b-a, 1) < Math.max(ap, norm(b,1)*rp)) {
+        if (k > 2 && norm(b-a) < Math.max(ap, norm(b)*rp)) {
             return b;
         }
     }
