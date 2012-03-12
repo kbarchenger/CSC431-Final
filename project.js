@@ -360,7 +360,7 @@ norm = function(A, p) {
             for (c=0; c<A.cols; c++){
 		var sumCol=0;
         	for (r=0; r<A.rows; r++){
-        	    sumCol+=A.data[r][c];
+        	    sumCol+=Math.abs(A.data[r][c]);
         	}
         	z.push(sumCol);
             }
@@ -376,10 +376,17 @@ norm = function(A, p) {
 };
 
 // Condition number
-condition_number = function(f) {
+condition_number = function(f,x,h) {
+	x = x || "None";
+	h = h || 1e-6;
+
+	if (typeof(f)=== "function"){
+		return D(f,x,h)*x/f(x)
+	}
     if (f instanceof Matrix) {
         var a = f.inverse();
-        return norm(f) * norm(a);
+       		console.log("normF " + norm(f) + " normA " + norm(a));
+	 	return norm(f,1) * norm(a,1);
     }
     else {
         throw "Not implemented error";
