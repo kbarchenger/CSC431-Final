@@ -701,7 +701,9 @@ optimize_newton = function(f, x, ns, ap, rp) {
         if (norm(DDfx) < ap) {
             throw "unstable solution";
         }
-        if (norm(x-x_old) < Math.max(ap, norm(x)*rp)) {
+		x_old = x;
+		x = x-Dfx/DDfx;
+        if (norm(x-x_old) < Math.max(ap, norm(x,1)*rp)) {
             return x;
         }
     }
@@ -743,6 +745,9 @@ optimize_newton_stabilized = function(f, a, b, ns, ap, rp) {
     // Default values
     ap = ap || 1e-6;
     rp = rp || 1e-4;
+	
+	Dfa = D(f,a);
+	Dfb = D(f,b);
 
     if (Dfa === 0) {
         return a;
@@ -756,7 +761,7 @@ optimize_newton_stabilized = function(f, a, b, ns, ap, rp) {
 
     x = (a+b)/2;
     fx = f(x);
-    Dfx  = D(f,x);
+    Dfx = D(f,x);
     DDfx = DD(f,x);
     for (k = 0; k < ns; k++) {
         if (Dfx === 0) {
@@ -765,7 +770,13 @@ optimize_newton_stabilized = function(f, a, b, ns, ap, rp) {
         x_old = x;
         fx_old = fx;
         Dfx_old = Dfx;
-        if (norm(x-x_old) < Math.max(ap, norm(x)*rp)) {
+		if(norm(DDfx>ap)){
+			x = x -Dfx/DDfx;
+		}
+		if (x===x_old || x<a || x>b){
+			x = (a+b)/2;
+		}
+        if (norm(x-x_old) < Math.max(ap, norm(x,1)*rp)) {
             return x;
         }
         fx = f(x)
