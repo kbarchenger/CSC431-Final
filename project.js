@@ -18,7 +18,7 @@ Matrix = function(rows, cols, fill) {
         var counter = 0;
         for (i = 0; i < rows; i++) {
             a = [];
-            for (j=0; j < cols; j++) {
+            for (j = 0; j < cols; j++) {
                 a[j] = fill[counter];
                 counter++;
             }
@@ -213,7 +213,7 @@ Matrix.prototype.div = function(B) {
     }
     else if (typeof(B) === 'number') {
         // Matrix/Scalar
-        m = this.mult(1.0/B);
+        m = this.mult(1.0 / B);
     } 
     else {
         throw "B must be a matrix or number.";
@@ -336,13 +336,12 @@ Matrix.prototype.is_almost_zero = function(ap, rp) {
 norm = function(A, p) {
     //Default p value
     p = p || 1;
-    
     if (A instanceof Array) {
         var a = 0;
         for (x = 0; x < A.length; x++) {
-            a += Math.pow(A[x], p);
+            a += Math.pow(A[x],p);
         }
-        return Math.pow(a, (1.0/p));
+        return Math.pow(a,(1.0/p));
     }
     else if (A instanceof Matrix) {
         var x = [];
@@ -359,11 +358,11 @@ norm = function(A, p) {
         }
         else if (p === 1) {
             for (c = 0; c < A.cols; c++){
-                var sumCol=0;
+                var sumCol = 0;
                 for (r = 0; r < A.rows; r++){
-                    sumCol+=Math.abs(A.data[r][c]);
+                    sumCol += Math.abs(A.data[r][c]);
                 }
-                z.push(sumCol)
+                z.push(sumCol);
             }
             return Math.max.apply(Math, z);;
         }
@@ -381,7 +380,7 @@ condition_number = function(f,x,h) {
 	x = x || "None";
 	h = h || 1e-6;
 
-	if (typeof(f)=== "function"){
+	if (typeof(f) === "function"){
 		return D(f,x,h)*x/f(x)
 	}
     if (f instanceof Matrix) {
@@ -491,12 +490,17 @@ Markovitz = function(mu, A, r_free) {
     }
 
     portfolio_return = mu.mult(x);
-    temp = A.mult(x)
-    portfolio_risk = Math.sqrt(x.mult(temp))
-    return [portfolio, portfolio_return, portfolio_risk]
+    temp = A.mult(x);
+    portfolio_risk = Math.sqrt(x.mult(temp));
+    return [portfolio, portfolio_return, portfolio_risk];
 }
 
 // Finds fitting function using least squares method
+// Takes a list of points (x, y, dy) and a list of fitting functions
+// Returns an object holding:
+//    fit_coeff: a column vector with the fitting coefficients
+//    chi2: the chi-squared value for the fit
+//    fitting_f: the fitting function, as a function of x
 fit_least_squares = function(points, f) {
     eval_fitting_function = function(f, c, x) {
         if (f.length === 1) {
@@ -546,24 +550,28 @@ fit_least_squares = function(points, f) {
 
 // Returns the first derivative of function f at x
 D = function(f, x, h){
+    // Default value
     h = h || 1e-6;
+    
     return (f(x+h) - f(x-h)) / 2 / h;
 }
 
 
 // Returns the second derivative of function f at x
 DD = function(f, x, h){
+    // Default value
     h = h || 1e-6;
+
     return (f(x+h) - 2.0*f(x) + f(x-h)) / (h*h);
 }
 
-// Solve Fixed Point
-solve_fixed_point = function(f,x,ns, ap, rp){
+// Finds the zero of function f close to x using the fixed point method
+solve_fixed_point = function(f, x, ns, ap, rp){
     // Default values
     ap = ap || 1e-6;
     rp = rp || 1e-4;
 
-    for (k=0; k<ns; k++){
+    for (k = 0; k < ns; k++){
         if (Math.abs(D(g, x)) >= 1) {
             throw "error D(g)(x) >= 1";
         }
@@ -577,7 +585,7 @@ solve_fixed_point = function(f,x,ns, ap, rp){
 };
 
 
-// Solve Bisection
+// Finds the zero of function f between a and b using the bisection method
 solve_bisection = function(f, a, b, ns, ap, rp){
     // Default values
     ap = ap || 1e-6;
@@ -613,7 +621,7 @@ solve_bisection = function(f, a, b, ns, ap, rp){
 }
 
 
-// Solve Newton
+// Finds the zero of function f near x using the Newton method
 solve_newton = function(f, x, ns, ap, rp) {
     // Default values
     ap = ap || 1e-6;
@@ -634,7 +642,7 @@ solve_newton = function(f, x, ns, ap, rp) {
     throw "no convergence";
 }
 
-// Solve secant
+// Finds the zero of function f near x using the secant method
 solve_secant = function(f, x, ns, ap, rp) {
     // Default values
     ap = ap || 1e-6;
@@ -658,7 +666,7 @@ solve_secant = function(f, x, ns, ap, rp) {
     throw "no convergence"
 }
 
-//Solve Newton Stabilized
+// Finds the zero of function f near x using the Newton stabilized method
 solve_newton_stabilized = function(f, a, b, ns, ap, rp) {
     // Default values
     ap = ap || 1e-6;
@@ -705,8 +713,8 @@ solve_newton_stabilized = function(f, a, b, ns, ap, rp) {
 }
 
 
-//Optimize bisection
-optimize_bisection = function(f,a,b,ns, ap, rp) {
+// Finds the max/min of f between a and b using the bisection method
+optimize_bisection = function(f, a, b, ns, ap, rp) {
     // Default values
     ap = ap || 1e-6;
     rp = rp || 1e-4;
@@ -741,7 +749,7 @@ optimize_bisection = function(f,a,b,ns, ap, rp) {
 }
 
 
-// Optimize Newton
+// Finds the max/min of f near x using the Newton method
 optimize_newton = function(f, x, ns, ap, rp) {
     // Default values
     ap = ap || 1e-6;
@@ -757,7 +765,7 @@ optimize_newton = function(f, x, ns, ap, rp) {
             throw "unstable solution";
         }
 		x_old = x;
-		x = x-Dfx/DDfx;
+		x = x - Dfx/DDfx;
         if (norm(x-x_old) < Math.max(ap, norm(x)*rp)) {
             return x;
         }
@@ -765,7 +773,7 @@ optimize_newton = function(f, x, ns, ap, rp) {
     throw "no convergence";
 }
 
-// Optimize Secant
+// Finds the max/min of f near x using the secant method
 optimize_secant = function(f, x, ns, ap, rp) {
     // Default values
     ap = ap || 1e-6;
@@ -795,12 +803,12 @@ optimize_secant = function(f, x, ns, ap, rp) {
     throw "no convergence";
 }
 
-// Optimize Newton Stabilized
+// Finds the max/min of f between a and b using the Newton stabilized method
 optimize_newton_stabilized = function(f, a, b, ns, ap, rp) {
     // Default values
     ap = ap || 1e-6;
     rp = rp || 1e-4;
-
+	
 	Dfa = D(f,a);
 	Dfb = D(f,b);
 
@@ -825,10 +833,10 @@ optimize_newton_stabilized = function(f, a, b, ns, ap, rp) {
         x_old = x;
         fx_old = fx;
         Dfx_old = Dfx;
-		if(norm(DDfx>ap)){
-			x = x -Dfx/DDfx;
+		if(norm(DDfx) > ap) {
+			x = x - Dfx/DDfx;
 		}
-		if (x===x_old || x<a || x>b){
+		if (x === x_old || x < a || x > b){
 			x = (a+b)/2;
 		}
         if (norm(x-x_old) < Math.max(ap, norm(x)*rp)) {
@@ -849,7 +857,7 @@ optimize_newton_stabilized = function(f, a, b, ns, ap, rp) {
     throw "no convergence";
 }
 
-// Optimize Golden Search
+// Finds the max/min of f between a and b using the Golden Search method
 optimize_golden_search = function(f, a, b, ns, ap, rp) {
     // Default values
     ap = ap || 1e-6;
