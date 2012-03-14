@@ -133,8 +133,43 @@ test1 = function() {
     }
 }
 
-// Test of solvers and optimizers
+// Test of least squares function
 test2 = function() {
+    var points = []
+    for (k = 0; k < 100; k++) {
+        points.push([k, 5 + 0.8*k + 0.3*k*k + Math.sin(k), 2]);
+    }
+
+    // QUADRATIC
+    quad = function(){
+        return [function(x) {return Math.pow(x,0);},
+                function(x) {return Math.pow(x,1);},
+                function(x) {return Math.pow(x,2);}];
+    }
+
+    result = fit_least_squares(points, quad());
+    for (p = points.length - 10; p < points.length; p++) {
+        console.log(points[p][0], Math.round(points[p][1]*100)/100,
+            Math.round(result.fitting_f(points[p][0])*100)/100);
+    }
+
+   /* Expected output for above loop (last 10 points):
+          90 2507.89 2506.98
+          91 2562.21 2562.08
+          92 2617.02 2617.78
+          93 2673.15 2674.08
+          94 2730.75 2730.98
+          95 2789.18 2788.48
+          96 2847.58 2846.58
+          97 2905.68 2905.28
+          98 2964.03 2964.58
+          99 3023.5 3024.48
+   */
+}
+
+
+// Test of solvers and optimizers
+test3 = function() {
     try {
         // Define function f(x)
         f = function(x){
@@ -147,43 +182,41 @@ test2 = function() {
         }
 
         // Testing solve_fixed_point
-        //console.log("Fixed Point: x = " + solve_fixed_point(f, 0.5, 100));
+        console.log("Fixed Point: x = " + solve_fixed_point(f, 0.5, 100));
 
         // Testing solve_bisection
         console.log("Bisection method: x = " +
                     solve_bisection(f, 0.5, 1, 100));
 
         // Testing solve_newton
-        //console.log("Newton: x = " + solve_newton(f, 0.5, 100));
+        console.log("Newton: x = " + solve_newton(f, 0.5, 100));
 
         // Testing solve_secant
-        //console.log("Secant: x = " + solve_secant((f, 0.5, 100));
+        console.log("Secant: x = " + solve_secant(f, 0.5, 100));
 
         // Testing solve_newton_stabilized
         console.log("Newton Stabilized: x = " +
                     solve_newton_stabilized(f, 0.5, 1, 100));
 
         // Testing optimize_bisection
-        //console.log("Optimize Bisection: x = " +
-        //            optimize_bisection(f, 0.5, 1, 100));
+        console.log("Optimize Bisection: x = " +
+                    optimize_bisection(f, 0, 2, 100));
 
         // Testing optimize_newton
-        //console.log("Optimize Newton: x = " +
-        //            optimize_newton(f, 0.5, 100));
+        console.log("Optimize Newton: x = " +
+                    optimize_newton(f, 0.5, 100));
 
         // Testing optimize_secant
-        //console.log("Optimze Secant: x = " +
-        //            optimize_secant(f, 0.5, 100));
+        console.log("Optimze Secant: x = " +
+                    optimize_secant(f, 1, 100));
 
         // Testing optimize_newton_stabilized
-        //console.log("Optimize Newton Stabilized: x = " +
-        //            optimize_newton_stabilized(f, 0.5, 1, 100));
+        console.log("Optimize Newton Stabilized: x = " +
+                    optimize_newton_stabilized(f, 0.5, 1, 100));
 
         // Testing optimize_golden_search
-        //console.log("Optimize Golden Search: x = " +
-        //            optimize_golden_search(f, 0.5, 1, 100));
-
-
+        console.log("Optimize Golden Search: x = " +
+                    optimize_golden_search(f, 0, 2, 100));
     }
     catch(err) {
         alert(err);
@@ -192,6 +225,7 @@ test2 = function() {
 
 test1();
 test2();
+test3();
 
 </script>
 </head>
