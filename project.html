@@ -192,7 +192,7 @@ test3 = function() {
         console.log("Newton: x = " + solve_newton(f, 0.5, 100));
 
         // Testing solve_secant
-        console.log("Secant: x = " + solve_secant((f, 0.5, 100));
+        console.log("Secant: x = " + solve_secant(f, 0.5, 100));
 
         // Testing solve_newton_stabilized
         console.log("Newton Stabilized: x = " +
@@ -212,13 +212,11 @@ test3 = function() {
 
         // Testing optimize_newton_stabilized
         console.log("Optimize Newton Stabilized: x = " +
-                    optimize_newton_stabilized(f, 0.5, 1, 100));
+                    optimize_newton_stabilized(f, 1, 2, 100));
 
         // Testing optimize_golden_search
         console.log("Optimize Golden Search: x = " +
-                    optimize_golden_search(f, 0, 2, 100));
-
-
+                    optimize_golden_search(f, 1, 2, 100));
     }
     catch(err) {
         alert(err);
