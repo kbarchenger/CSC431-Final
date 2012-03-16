@@ -893,3 +893,24 @@ optimize_golden_search = function(f, a, b, ns, ap, rp) {
     }
     throw "no convergence";
 }
+
+//Extra
+
+//Partial
+//inputs: f=function, a=array of variables, i=partial in respect to i(index val)
+partial = function(f,a,i,h){
+	var h = h || 1e-6;
+	var u = [];
+	var w = [];
+	for(j=0;j<a.length;j++){
+		if(j===i){
+			u.push(a[j]+h);
+			w.push(a[j]-h);
+		}
+		else{
+			u.push(a[j]);
+			w.push(a[j]);
+		}
+	}
+	return (f(u)-f(w))/(2*h);
+}
