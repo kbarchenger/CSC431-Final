@@ -2,6 +2,15 @@
 // This code is distributed under the BSD license and it is a rewrite of code
 // shared in class CSC431 at DePaul University by Massimo Di Pierro.
 
+// Creates a matrix
+// Inputs: rows, a number, the number of rows in the matrix
+//         cols, a number, the number of columns in the matrix
+//         fill, a number or an array, the value or values to fill the array 
+// Attributes: Matrix.rows, the number of rows in the matrix
+//             Matrix.cols, the number of columns in the matrix
+//             Matrix.data, an array of arrays holding the values
+// Exceptions: Throws exception if rows or cols is less than 1
+//             Throws exception if fill is not a number or array
 Matrix = function(rows, cols, fill) {
     // Default values
     fill = fill || 0.0;
@@ -35,7 +44,7 @@ Matrix = function(rows, cols, fill) {
         }
     }
     else {
-        alert("Fill must be a number or an array");
+        throw "Fill must be a number or an array";
     }
 
     this.rows = rows;
@@ -43,6 +52,8 @@ Matrix = function(rows, cols, fill) {
     this.data = data;
 };
 
+// Prints a matrix to the console one row at a time
+// Inputs: m, a matrix
 print_matrix = function(m) {
     console.log('[');
     for (i = 0; i < m.rows; i++) {
@@ -51,7 +62,9 @@ print_matrix = function(m) {
     console.log(']');
 };
 
-// Creates an identity matrix of size rows
+// Creates an identity matrix
+// Input: rows, a number, the number of rows in the matrix
+// Returns: a matrix
 identity_matrix = function(rows) {
     var m = new Matrix(rows, rows, 0);
     for (i = 0; i < rows; i++) {
@@ -60,7 +73,9 @@ identity_matrix = function(rows) {
     return m;
 };
 
-// Creates a matrix with the diagonal filled from the list d
+// Creates a matrix with the diagonal filled from the array d
+// Inputs: d, an array, the values to use in the diagonal of d
+// Returns: a matrix
 diagonal_matrix = function(d) {
     m = new Matrix(d.length, d.length, 0);
 
@@ -72,6 +87,8 @@ diagonal_matrix = function(d) {
 };
 
 // Builds a matrix from a list of lists
+// Inputs: l, an array of arrays, the number of rows in the matrix
+// Returns: a new matrix
 matrix_from_list = function(l) {
     var a = [];
     for (i = 0; i < l.length; i++) {
@@ -80,7 +97,8 @@ matrix_from_list = function(l) {
     return new Matrix(l.length, l[0].length, a);
 };
 
-// Negates this matrix
+// Negates each value in this matrix
+// Returns: a new matrix
 Matrix.prototype.neg = function() {
     var n = new Matrix(this.rows, this.cols);
     for (i = 0; i < this.rows; i++) {
@@ -89,9 +107,13 @@ Matrix.prototype.neg = function() {
         }
     }
     return n;
-}
+};
 
-// Computes this + B for B a matrix or scalar
+// Computes this + B
+// Inputs: B, a matrix or number, to add to this matrix
+// Returns: a new matrix
+// Exceptions: Throws exception if rows or cols in this and B don't match
+//             Throws exception if B is not a matrix or number
 Matrix.prototype.add = function(B) {
     if (B instanceof Matrix) {
         if (this.rows !== B.rows) {
@@ -123,7 +145,11 @@ Matrix.prototype.add = function(B) {
     }
 };
 
-// Computes this - B for B a matrix or scalar
+// Computes this - B
+// Inputs: B, a matrix or number, to subtract from this matrix
+// Returns: a new matrix
+// Exceptions: Throws exception if rows or cols in this and B don't match
+//             Throws exception if B is not a matrix or number
 Matrix.prototype.sub = function(B) {
     if (B instanceof Matrix) {
         if (this.rows !== B.rows) {
@@ -156,9 +182,13 @@ Matrix.prototype.sub = function(B) {
     }
 };
 
-// Computes this * B for B a matrix or scalar
-// If this and B both single column matrices with same number of rows,
-// compute scalar product
+// Computes this * B
+// Compute scalar product if this and B are both single column matrices
+//    with same number of rows
+// Inputs: B, a matrix or number, to multiply this matrix by
+// Returns: a new matrix
+// Exceptions: Throws exception if cols in this don't match rows in B
+//             Throws exception if B is not a matrix or number
 Matrix.prototype.mult = function(B){
     if (B instanceof Matrix) {
         var m = new Matrix(this.rows, B.cols);
@@ -173,7 +203,7 @@ Matrix.prototype.mult = function(B){
                 return sum;
             }
             else {
-                throw "This matrix columns != matrix 1 rows";
+                throw "This matrix columns != matrix B rows";
             }
         }
 	
@@ -202,7 +232,11 @@ Matrix.prototype.mult = function(B){
     }
 };
 
-// Computes this / B for B a matrix or scalar
+// Computes this / B
+// Inputs: B, a matrix or number, to divide this matrix by
+// Returns: a new matrix
+// Exceptions: Throws exception B is 0
+//             Throws exception if B is not a matrix or number
 Matrix.prototype.div = function(B) {
     var m = new Matrix(this.rows, this.cols);
 
@@ -213,6 +247,9 @@ Matrix.prototype.div = function(B) {
     }
     else if (typeof(B) === 'number') {
         // Matrix/Scalar
+        if (B === 0) {
+            throw "B cannot be 0.";
+        }
         m = this.mult(1.0 / B);
     } 
     else {
@@ -222,7 +259,9 @@ Matrix.prototype.div = function(B) {
     return m;
 };
 
-// Computes the inverse of this matrix using Gauss-Jordan
+// Computes the inverse of this matrix using Gauss-Jordan elimination
+// Returns: a new matrix
+// Exceptions: Throws exception if this is not a square matrix
 Matrix.prototype.inverse = function(){
     if (this.rows != this.cols) {
         throw "Not a square matrix";
@@ -263,6 +302,8 @@ Matrix.prototype.inverse = function(){
 };
 
 // Swap row i with row j in this matrix
+// Inputs: i and j, integers, denoting which rows to swap
+// Returns: a new matrix
 Matrix.prototype.swap_rows = function(i, j) {
     var m = new Matrix(this.rows, this.cols);
 	
@@ -281,7 +322,8 @@ Matrix.prototype.swap_rows = function(i, j) {
     return m;
 };
 
-// Transpose this matrix
+// Transposes this matrix
+// Returns: a new matrix
 Matrix.prototype.transpose = function() {
     var m = new Matrix(this.cols, this.rows);
 
@@ -292,9 +334,12 @@ Matrix.prototype.transpose = function() {
     }
 
     return m;
-}
+};
 
-// Returns true if this matrix is almost symmetric
+// Determines if the matrix is almost symmetric
+// Inputs (Optional): ap, a number, the absolute precision (default: 1e-6)
+//                    rp, a number, the relative precision (default: 1e-4)
+// Returns: a boolean, true if this matrix is almost symmetric
 Matrix.prototype.is_almost_symmetric = function(ap, rp) {
     if (this.rows !== this.cols) { return false; }
 	
@@ -312,9 +357,12 @@ Matrix.prototype.is_almost_symmetric = function(ap, rp) {
         }
     }
     return true;
-}
+};
 
-// Returns true if this matrix is almost zero
+// Determines if this matrix is almost zero
+// Inputs (Optional): ap, a number, the absolute precision (default: 1e-6)
+//                    rp, a number, the relative precision (default: 1e-4)
+// Returns: a boolean, true if this matrix is almost zero
 Matrix.prototype.is_almost_zero = function(ap, rp) {
     // Default values
     ap = ap || 1e-6;
@@ -330,9 +378,13 @@ Matrix.prototype.is_almost_zero = function(ap, rp) {
         }
     }
     return true;
-}
+};
 
 // Finds the p-norm of a matrix or array
+// Inputs: A, a matrix
+// Inputs (Optional):  p, a number, the order of norm to calculate (Default: 1)
+// Returns: a number, the p-norm of A
+// Exceptions: Throws exception if p > 1 for a matrix (not implemented)
 norm = function(A, p) {
     //Default p value
     p = p || 1;
@@ -375,26 +427,38 @@ norm = function(A, p) {
     }
 };
 
-// Condition number
-condition_number = function(f,x,h) {
-	x = x || "None";
-	h = h || 1e-6;
+// Finds the condition number of f
+// Inputs: f, a function or matrix
+// Inputs (Optional):  x, the point in function f at which to calculate
+//                     h, a number (Default: 1e-6)
+// Returns: a number, the condition number of f
+// Exceptions: Throws exception if f not a function or matrix
+condition_number = function(f, x, h) {
+    x = x || "None";
+    h = h || 1e-6;
 
-	if (typeof(f) === "function"){
-		return D(f,x,h)*x/f(x)
-	}
+    if (typeof(f) === "function"){
+        return D(f,x,h)*x / f(x);
+    }
     if (f instanceof Matrix) {
         var a = f.inverse();
-	 	return norm(f) * norm(a);
+        return norm(f) * norm(a);
     }
     else {
         throw "Not implemented error";
     }
 };
 
-// Computes the exp of a number or matrix x
+// Computes the exp of x
+// Inputs: x, a matrix or number
+// Inputs (Optional): ns, the maximum number of steps to perform (default: 100)
+//                    ap, a number, the absolute precision (default: 1e-6)
+//                    rp, a number, the relative precision (default: 1e-4)
+// Returns: a new matrix or a number
+// Exceptions: Throws exception if the function does not converge in ns steps
 exp = function(x, ns, ap, rp){
     // Default values
+    ns = ns || 100;
     ap = ap || 1e-6;
     rp = rp || 1e-4;
 
@@ -418,6 +482,10 @@ exp = function(x, ns, ap, rp){
 };
 
 // Runs the Cholesky decomposition on the array A
+// Inputs: A, a matrix
+// Returns: a new matrix
+// Exceptions: Throws exception if A is not symmetric
+//             Throws exception if A is not positive definite
 Cholesky = function(A) {
     if (!A.is_almost_symmetric()) {
         throw "Is not symmetric";
@@ -448,10 +516,12 @@ Cholesky = function(A) {
     }
 	
     return L;
-}
+};
 
-// Returns true if the matrix A is positive definite
+// Determines if the matrix A is positive definite
 // Uses Cholesky(A) to determine
+// Inputs: A, a matrix
+// Returns: a new matrix
 is_positive_definite = function(A) {
     if (!A.is_almost_symmetric()) {
         return false;
@@ -464,11 +534,14 @@ is_positive_definite = function(A) {
     catch (err) {
         return false;
     }
-}
+};
 
-// Assesses Markovitz risk/return and returns portfolio, return, and risk
-// as an array
-// Takes matrix mu, matrix A, and number risk free return
+// Assesses Markovitz risk/return
+// Inputs: mu, a matrix
+//         A, a matrix
+//         r_free, a number, the risk-free return
+// Returns: a list containing the portfolio, the portfolio_return, 
+//          and the portfolio_risk
 Markovitz = function(mu, A, r_free) {
     var x, y, temp, A_inv, portfolio_risk, portfolio_return;
 
@@ -493,11 +566,12 @@ Markovitz = function(mu, A, r_free) {
     temp = A.mult(x);
     portfolio_risk = Math.sqrt(x.mult(temp));
     return [portfolio, portfolio_return, portfolio_risk];
-}
+};
 
-// Finds fitting function using least squares method
-// Takes a list of points (x, y, dy) and a list of fitting functions
-// Returns an object holding:
+// Finds a fitting function using least squares method
+// Inputs: points, a list of points of form (x, y, dy)
+//         f, a list of fitting functions 
+// Returns: an object holding the following:
 //    fit_coeff: a column vector with the fitting coefficients
 //    chi2: the chi-squared value for the fit
 //    fitting_f: the fitting function, as a function of x
@@ -546,28 +620,44 @@ fit_least_squares = function(points, f) {
         chi2: chi2,
         fitting_f: fitting_f
     };
-}
+};
 
 // Returns the first derivative of function f at x
+// Inputs: f, a function of x
+//         x, a number
+// Inputs (Optional): h, a number (Default: 1e-6)
+// Returns: a number, the value of the derivate of f at x
 D = function(f, x, h){
     // Default value
     h = h || 1e-6;
     
-    return (f(x+h) - f(x-h)) / 2 / h;
-}
-
+    return (f(x+h) - f(x-h)) / (2*h);
+};
 
 // Returns the second derivative of function f at x
+// Inputs: f, a function of x
+//         x, a number
+// Inputs (Optional): h, a number (Default: 1e-6)
+// Returns: a number, the value of the second derivate of f at x
 DD = function(f, x, h){
     // Default value
     h = h || 1e-6;
 
     return (f(x+h) - 2.0*f(x) + f(x-h)) / (h*h);
-}
+};
 
-// Finds the zero of function f close to x using the fixed point method
+// Finds the zero of function f near x using the fixed point method
+// Inputs: f, a function of x
+//         x, a number
+// Inputs (Optional): ns, the maximum number of steps to perform (default: 100)
+//                    ap, a number, the absolute precision (default: 1e-6)
+//                    rp, a number, the relative precision (default: 1e-4)
+// Returns: a number, the value of the zero of f near x
+// Exceptions: Throws exception if the required precision (ap or rp)
+//                not met within ns steps (no convergence)
 solve_fixed_point = function(f, x, ns, ap, rp){
     // Default values
+    ns = ns || 100;
     ap = ap || 1e-6;
     rp = rp || 1e-4;
 
@@ -586,8 +676,19 @@ solve_fixed_point = function(f, x, ns, ap, rp){
 
 
 // Finds the zero of function f between a and b using the bisection method
+// Inputs: f, a function of x
+//         a, a number, the minimum x to consider
+//         b, a number, the maximum x to consider
+// Inputs (Optional): ns, the maximum number of steps to perform (default: 100)
+//                    ap, a number, the absolute precision (default: 1e-6)
+//                    rp, a number, the relative precision (default: 1e-4)
+// Returns: a number, the value of the zero of f near x
+// Exceptions: Throws exception if f(a) and f(b) have same sign
+//             Throws exception if the required precision (ap or rp)
+//                not met within ns steps (no convergence)
 solve_bisection = function(f, a, b, ns, ap, rp){
     // Default values
+    ns = ns || 100;
     ap = ap || 1e-6;
     rp = rp || 1e-4;
 
@@ -618,12 +719,20 @@ solve_bisection = function(f, a, b, ns, ap, rp){
         }
     }
     throw "no convergence";
-}
-
+};
 
 // Finds the zero of function f near x using the Newton method
+// Inputs: f, a function of x
+//         x, a number
+// Inputs (Optional): ns, the maximum number of steps to perform (default: 100)
+//                    ap, a number, the absolute precision (default: 1e-6)
+//                    rp, a number, the relative precision (default: 1e-4)
+// Returns: a number, the value of the zero of f near x
+// Exceptions: Throws exception if the required precision (ap or rp)
+//                not met within ns steps (no convergence)
 solve_newton = function(f, x, ns, ap, rp) {
     // Default values
+    ns = ns || 100;
     ap = ap || 1e-6;
     rp = rp || 1e-4;
 
@@ -640,11 +749,20 @@ solve_newton = function(f, x, ns, ap, rp) {
         }
     }
     throw "no convergence";
-}
+};
 
 // Finds the zero of function f near x using the secant method
+// Inputs: f, a function of x
+//         x, a number
+// Inputs (Optional): ns, the maximum number of steps to perform (default: 100)
+//                    ap, a number, the absolute precision (default: 1e-6)
+//                    rp, a number, the relative precision (default: 1e-4)
+// Returns: a number, the value of the zero of f near x
+// Exceptions: Throws exception if the required precision (ap or rp)
+//                not met within ns steps (no convergence)
 solve_secant = function(f, x, ns, ap, rp) {
     // Default values
+    ns = ns || 100;
     ap = ap || 1e-6;
     rp = rp || 1e-4;
 
@@ -664,11 +782,22 @@ solve_secant = function(f, x, ns, ap, rp) {
         Dfx = (fx-fx_old) / (x-x_old)
     }
     throw "no convergence"
-}
+};
 
 // Finds the zero of function f near x using the Newton stabilized method
+// Inputs: f, a function of x
+//         a, a number, the minimum x to consider
+//         b, a number, the maximum x to consider
+// Inputs (Optional): ns, the maximum number of steps to perform (default: 100)
+//                    ap, a number, the absolute precision (default: 1e-6)
+//                    rp, a number, the relative precision (default: 1e-4)
+// Returns: a number, the value of the zero of f near x
+// Exceptions: Throws exception if f(a) and f(b) have same sign
+//             Throws exception if the required precision (ap or rp)
+//                not met within ns steps (no convergence)
 solve_newton_stabilized = function(f, a, b, ns, ap, rp) {
     // Default values
+    ns = ns || 100;
     ap = ap || 1e-6;
     rp = rp || 1e-4;
 
@@ -710,12 +839,23 @@ solve_newton_stabilized = function(f, a, b, ns, ap, rp) {
         }
     }
     throw "no convergence";
-}
+};
 
 
 // Finds the max/min of f between a and b using the bisection method
+// Inputs: f, a function of x
+//         a, a number, the minimum x to consider
+//         b, a number, the maximum x to consider
+// Inputs (Optional): ns, the maximum number of steps to perform (default: 100)
+//                    ap, a number, the absolute precision (default: 1e-6)
+//                    rp, a number, the relative precision (default: 1e-4)
+// Returns: a number, the value of the max/min of f near x
+// Exceptions: Throws exception if D(f)(a) and D(f)(b) have same sign
+//             Throws exception if the required precision (ap or rp)
+//                not met within ns steps (no convergence)
 optimize_bisection = function(f, a, b, ns, ap, rp) {
     // Default values
+    ns = ns || 100;
     ap = ap || 1e-6;
     rp = rp || 1e-4;
 
@@ -746,12 +886,21 @@ optimize_bisection = function(f, a, b, ns, ap, rp) {
         }
     }
     throw 'no convergence';
-}
+};
 
 
 // Finds the max/min of f near x using the Newton method
+// Inputs: f, a function of x
+//         x, a number
+// Inputs (Optional): ns, the maximum number of steps to perform (default: 100)
+//                    ap, a number, the absolute precision (default: 1e-6)
+//                    rp, a number, the relative precision (default: 1e-4)
+// Returns: a number, the value of the max/min of f near x
+// Exceptions: Throws exception if the required precision (ap or rp)
+//                not met within ns steps (no convergence)
 optimize_newton = function(f, x, ns, ap, rp) {
     // Default values
+    ns = ns || 100;
     ap = ap || 1e-6;
     rp = rp || 1e-4;
 
@@ -771,11 +920,20 @@ optimize_newton = function(f, x, ns, ap, rp) {
         }
     }
     throw "no convergence";
-}
+};
 
 // Finds the max/min of f near x using the secant method
+// Inputs: f, a function of x
+//         x, a number
+// Inputs (Optional): ns, the maximum number of steps to perform (default: 100)
+//                    ap, a number, the absolute precision (default: 1e-6)
+//                    rp, a number, the relative precision (default: 1e-4)
+// Returns: a number, the value of the max/min of f near x
+// Exceptions: Throws exception if the required precision (ap or rp)
+//                not met within ns steps (no convergence)
 optimize_secant = function(f, x, ns, ap, rp) {
     // Default values
+    ns = ns || 100;
     ap = ap || 1e-6;
     rp = rp || 1e-4;
 
@@ -801,11 +959,22 @@ optimize_secant = function(f, x, ns, ap, rp) {
         DDfx = (Dfx - Dfx_old) / (x - x_old);
     }
     throw "no convergence";
-}
+};
 
 // Finds the max/min of f between a and b using the Newton stabilized method
+// Inputs: f, a function of x
+//         a, a number, the minimum x to consider
+//         b, a number, the maximum x to consider
+// Inputs (Optional): ns, the maximum number of steps to perform (default: 100)
+//                    ap, a number, the absolute precision (default: 1e-6)
+//                    rp, a number, the relative precision (default: 1e-4)
+// Returns: a number, the value of the max/min of f near x
+// Exceptions: Throws exception if D(f)(a) and D(f)(b) have same sign
+//             Throws exception if the required precision (ap or rp)
+//                not met within ns steps (no convergence)
 optimize_newton_stabilized = function(f, a, b, ns, ap, rp) {
     // Default values
+    ns = ns || 100;
     ap = ap || 1e-6;
     rp = rp || 1e-4;
 	
@@ -855,11 +1024,21 @@ optimize_newton_stabilized = function(f, a, b, ns, ap, rp) {
         }
     }
     throw "no convergence";
-}
+};
 
 // Finds the max/min of f between a and b using the Golden Search method
+// Inputs: f, a function of x
+//         a, a number, the minimum x to consider
+//         b, a number, the maximum x to consider
+// Inputs (Optional): ns, the maximum number of steps to perform (default: 100)
+//                    ap, a number, the absolute precision (default: 1e-6)
+//                    rp, a number, the relative precision (default: 1e-4)
+// Returns: a number, the value of the max/min of f near x
+// Exceptions: Throws exception if the required precision (ap or rp)
+//                not met within ns steps (no convergence)
 optimize_golden_search = function(f, a, b, ns, ap, rp) {
     // Default values
+    ns = ns || 100;
     ap = ap || 1e-6;
     rp = rp || 1e-4;
 
@@ -892,4 +1071,29 @@ optimize_golden_search = function(f, a, b, ns, ap, rp) {
         }
     }
     throw "no convergence";
-}
+};
+
+//Extra
+
+// Computes the partial derivative of f with respect to i
+// Inputs: f, a function of x
+//         a, an array of variables
+//         i, an integer, the variable to take the partial with respect to
+// Inputs (Optional): h, a number (Default: 1e-6)
+// Returns: a number, the value of the partial derivative of f near x
+partial = function(f, a, i, h){
+	var h = h || 1e-6;
+	var u = [];
+	var w = [];
+	for(j=0;j<a.length;j++){
+		if(j===i){
+			u.push(a[j]+h);
+			w.push(a[j]-h);
+		}
+		else{
+			u.push(a[j]);
+			w.push(a[j]);
+		}
+	}
+	return (f(u)-f(w))/(2*h);
+};

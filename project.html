@@ -123,7 +123,7 @@ test1 = function() {
         // Testing exp
         var AL = exp(3);
         console.log("exp(3) = " + AL);
-        var AM = exp(F, 100);
+        var AM = exp(F);
         console.log("exp(F) =");
         print_matrix(AM);
 
@@ -182,41 +182,41 @@ test3 = function() {
         }
 
         // Testing solve_fixed_point
-        console.log("Fixed Point: x = " + solve_fixed_point(f, 0.5, 100));
+        console.log("Fixed Point: x = " + solve_fixed_point(f, 0.5));
 
         // Testing solve_bisection
         console.log("Bisection method: x = " +
-                    solve_bisection(f, 0.5, 1, 100));
+                    solve_bisection(f, 0.5, 1));
 
         // Testing solve_newton
-        console.log("Newton: x = " + solve_newton(f, 0.5, 100));
+        console.log("Newton: x = " + solve_newton(f, 0.5));
 
         // Testing solve_secant
-        console.log("Secant: x = " + solve_secant(f, 0.5, 100));
+        console.log("Secant: x = " + solve_secant(f, 0.5));
 
         // Testing solve_newton_stabilized
         console.log("Newton Stabilized: x = " +
-                    solve_newton_stabilized(f, 0.5, 1, 100));
+                    solve_newton_stabilized(f, 0.5, 1));
 
         // Testing optimize_bisection
         console.log("Optimize Bisection: x = " +
-                    optimize_bisection(f, 0, 2, 100));
+                    optimize_bisection(f, 0, 2));
 
         // Testing optimize_newton
         console.log("Optimize Newton: x = " +
-                    optimize_newton(f, 0.5, 100));
+                    optimize_newton(f, 0.5));
 
         // Testing optimize_secant
         console.log("Optimze Secant: x = " +
-                    optimize_secant(f, 1, 100));
+                    optimize_secant(f, 1));
 
         // Testing optimize_newton_stabilized
         console.log("Optimize Newton Stabilized: x = " +
-                    optimize_newton_stabilized(f, 1, 2, 100));
+                    optimize_newton_stabilized(f, 1, 2));
 
         // Testing optimize_golden_search
         console.log("Optimize Golden Search: x = " +
-                    optimize_golden_search(f, 1, 2, 100));
+                    optimize_golden_search(f, 1, 2));
     }
     catch(err) {
         alert(err);
