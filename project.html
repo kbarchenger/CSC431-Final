@@ -30,6 +30,7 @@ test1 = function() {
         print_matrix(T);
         print_matrix(U);
 
+        // Testing matrix multiplication (mult)
         var V = M.mult(2);
         print_matrix(M);
         print_matrix(V);
@@ -37,18 +38,22 @@ test1 = function() {
         var W = N.mult(O);
         print_matrix(W);
 
+        // Testing swap_rows
         var X = T.swap_rows(0,1);
         print_matrix(T);
         print_matrix(X);
 
+        // Testing transposition
         var Y = N.transpose();
         print_matrix(N);
         print_matrix(Y);
 
+        // Testing inverse
         var F = new Matrix(2,2,[1,2,3,4]);
         var G = F.inverse();
         print_matrix(G);
 
+        // Testing matrix division (div)
         var J = F.div(2);
         print_matrix(J);
 
@@ -56,6 +61,7 @@ test1 = function() {
         var L = K.div(F);
         print_matrix(L);
         
+        // Testing is_almost_symmetric
         var AA = new Matrix(2,2,[1,0,0,1]);
         var AA_bool = AA.is_almost_symmetric();
         print_matrix(AA);
@@ -66,6 +72,7 @@ test1 = function() {
         print_matrix(AB);
         console.log('Matrix is almost symmetric: ' + AB_bool);
         
+        // Testing is_almost_zero
         var AC = new Matrix(2,2,[1,0,0,1]);
         var AC_bool = AC.is_almost_zero();
         print_matrix(AC);
@@ -126,7 +133,6 @@ test1 = function() {
         var AM = exp(F);
         console.log("exp(F) =");
         print_matrix(AM);
-
     }
     catch(err) {
         alert(err);
@@ -223,9 +229,54 @@ test3 = function() {
     }
 }
 
+// Test of functions of many variables
+test4 = function() {
+    try {
+        // Define function f(x) of several variables
+        f = function(x){
+            return 2.0*x[0] + 3.0*x[1] + 5.0*x[1]*x[2];
+        }
+
+        x = [1, 2, 3];
+
+        // Partial df / d(x[1])
+        var df1 = partial(f, 1);
+        console.log(Math.round(df1(x)*100) / 100);
+
+        // Partial df / (d(x[1])d(x[2]))
+        var df12 = partial(partial(f, 1), 2);
+        console.log(Math.round(df12(x)*100) / 100);
+
+        // Testing gradient
+        var grad_f = gradient(f, x);
+        console.log("Gradient of f at x:");
+        print_matrix(grad_f);
+
+        // Testing Hessian
+        var hess_f = hessian(f, x);
+        console.log("Hessian of f at x:");
+        print_matrix(hess_f);
+
+        // Testing Jacobian
+        f1 = function(x){
+            return 2.0*x[0];
+        }
+        g = [f, f1];
+
+        var jac_g = jacobian(g, x);
+        console.log("Jacobian of g at x:");
+        print_matrix(jac_g);
+    }
+    catch(err) {
+        alert(err);
+    }
+}
+
+
 test1();
 test2();
 test3();
+test4()
 
 </script>
 </head>

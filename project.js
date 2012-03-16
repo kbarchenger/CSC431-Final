@@ -537,8 +537,8 @@ is_positive_definite = function(A) {
 };
 
 // Assesses Markovitz risk/return
-// Inputs: mu, a matrix
-//         A, a matrix
+// Inputs: mu, a matrix, the expected arithmetic returns
+//         A, a matrix, the covariance matrix
 //         r_free, a number, the risk-free return
 // Returns: a list containing the portfolio, the portfolio_return, 
 //          and the portfolio_risk
@@ -1073,27 +1073,88 @@ optimize_golden_search = function(f, a, b, ns, ap, rp) {
     throw "no convergence";
 };
 
-//Extra
 
 // Computes the partial derivative of f with respect to i
 // Inputs: f, a function of x
-//         a, an array of variables
 //         i, an integer, the variable to take the partial with respect to
 // Inputs (Optional): h, a number (Default: 1e-6)
-// Returns: a number, the value of the partial derivative of f near x
-partial = function(f, a, i, h){
-	var h = h || 1e-6;
-	var u = [];
-	var w = [];
-	for(j=0;j<a.length;j++){
-		if(j===i){
-			u.push(a[j]+h);
-			w.push(a[j]-h);
-		}
-		else{
-			u.push(a[j]);
-			w.push(a[j]);
-		}
-	}
-	return (f(u)-f(w))/(2*h);
+// Returns: a function dfx(x), the partial derivative of f with respect
+//             to x[i]
+partial = function(f, i, h){
+    // Default value
+    var h = h || 1e-6;
+
+    var df = function(x, f, i, h) {
+        var u = [];
+        var w = [];
+        for(j = 0; j < x.length; j++) {
+            if (j === i){
+                u.push(x[j] + h);
+                w.push(x[j] - h);
+            }
+            else {
+                u.push(x[j]);
+                w.push(x[j]);
+            }
+        }
+        return (f(u)-f(w))/(2*h);
+    }
+
+    dfx = function(x) {
+        return df(x, f, i, h);
+    }
+
+    return dfx;
+};
+
+// Computes the gradient of f at x
+// Inputs: f, a function of x
+//         x, a point
+// Inputs (Optional): h, a number (Default: 1e-4)
+// Returns: a matrix, the gradient of f at point x
+gradient = function(f, x, h){
+    // Default values
+    var h = h || 1e-4;
+
+    var grad = new Matrix(x.length, 1);
+    for (r = 0; r < grad.rows; r++) {
+        grad.data[r][0] = partial(f, r, h)(x);
+    }
+    return grad;
+};
+
+// Computes the Hessian of f at x
+// Inputs: f, a function of x
+//         x, a point
+// Inputs (Optional): h, a number (Default: 1e-4)
+// Returns: a matrix, the Hessian of f at point x
+hessian = function(f, x, h){
+    // Default value
+    var h = h || 1e-4;
+
+    var hess = new Matrix(x.length, x.length);
+    for (r = 0; r < hess.rows; r++) {
+        for (c = 0; c < hess.cols; c++) {
+            hess.data[r][c] = partial(partial(f, r, h), c, h)(x);
+        }
+    }
+    return hess;
+};
+
+// Computes the Jacobian of f at x
+// Inputs: f, a list of functions of x
+//         x, a point
+// Inputs (Optional): h, a number (Default: 1e-4)
+// Returns: a matrix, the Jacobian of f at point x
+jacobian = function(f, x, h){
+    // Default value
+    var h = h || 1e-4;
+
+    var partials = new Matrix(x.length, f.length);
+    for (r = 0; r < x.length; r++) {
+        for (c = 0; c < f.length; c++) {
+            partials.data[r][c] = partial(f[c], r, h)(x);
+        }
+    }
+    return partials.transpose();
 };
