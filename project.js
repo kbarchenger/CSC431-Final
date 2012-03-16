@@ -1158,3 +1158,50 @@ jacobian = function(f, x, h){
     }
     return partials.transpose();
 };
+
+
+solve_newton_multi = function(f,x,ap,rp,ns){
+	ap = ap || 1e-6;
+	rp = rp || 1e-4;
+	ns = ns || 20;
+
+	x = new Matrix(x.length,1,x);
+	x = x.transpose();
+	fx = new Matrix(1,x.length,f(x.data));
+	fx = fx.transpose();
+	for(k=0; k<ns; k++){
+		fx.data = f(x.data);
+		J = jacobian(f,x.data);
+		if (norm(J)<ap){
+			throw "unstable solution";
+		}
+		x_old = x;
+		x = x-((J.mult(-1.0)).add(1.0)).mult(fx);
+		if (k>2 && norm(x-x_old)< Math.max(ap,norm(x)*rp)){
+			return x.data;
+		}
+	}
+	throw "no convergence";
+}
+
+optimize_newton_multi = function(f,x,ap,rp,ns){
+	ap = ap || 1e-6;
+	rp = rp || 1e-4;
+	ns = ns || 20;
+
+	x = new Matrix(x.length,1,x);
+	x = x.transpose();
+	for(k=0; k<ns; k++){
+		grad = gradient(f,x.data);
+		H = hessian(f, x.data);
+		if (norm(H)<ap){
+			throw "unstable solution";
+		}
+		x_old = x;
+		x = x-(H.inverse()).mult(grad);
+		if (k>2 && norm(x-x_old)< Math.max(ap,norm(x)*rp)){
+			return x.data;
+		}
+	}
+	throw "no convergence";
+}
