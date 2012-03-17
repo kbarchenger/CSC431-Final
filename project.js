@@ -1158,3 +1158,73 @@ jacobian = function(f, x, h){
     }
     return partials.transpose();
 };
+
+//Computes the root of a multidimensional function f near point x
+//Inputs: f, a list of functions at x
+//	  x, a point
+// Inputs (Optional): ns, the maximum number of steps to perform (default: 20)
+//                    ap, a number, the absolute precision (default: 1e-6)
+//                    rp, a number, the relative precision (default: 1e-4)
+//Returns: a point, the root of the function
+solve_newton_multi = function(f,x,ap,rp,ns){
+	ap = ap || 1e-6;
+	rp = rp || 1e-4;
+	ns = ns || 20;
+	
+	x = new Matrix(x.length,1,x);
+	for(k=0; k<ns; k++){
+		xd = [];
+		a = [];
+		for(i=0;i<x.rows;i++){
+			xd.push(x.data[i][0]);
+		}
+		//console.log(xd);
+		for (j=0; j<f.length; j++){
+			a.push(f[j](xd));
+		}
+		fx = new Matrix(f.length,1,a);
+		J = jacobian(f,xd);
+		if (norm(J)<ap){
+			throw "unstable solution";
+		}
+		x_old = x;
+		x = x.sub((J.inverse()).mult(fx));
+		if (k>1 && norm(x.sub(x_old))< Math.max(ap,norm(x)*rp)){
+			return xd;
+		}
+	}
+	throw "no convergence";
+}
+
+//Computes the extreme of multidimensional function f near point x
+//Inputs: f, a function at x
+//	  x, a point
+// Inputs (Optional): ns, the maximum number of steps to perform (default: 20)
+//                    ap, a number, the absolute precision (default: 1e-6)
+//                    rp, a number, the relative precision (default: 1e-4)
+//Returns: a point, the extreme of the function
+optimize_newton_multi = function(f,x,ap,rp,ns){
+	ap = ap || 1e-6;
+	rp = rp || 1e-4;
+	ns = ns || 20;
+
+	x = new Matrix(x.length,1,x);
+	for(k=0; k<ns; k++){
+		xd = [];
+		a = [];
+		for(i=0;i<x.rows;i++){
+			xd.push(x.data[i][0]);
+		}		
+		grad = gradient(f,xd);
+		H = hessian(f, xd);
+		if (norm(H)<ap){
+			throw "unstable solution";
+		}
+		x_old = x;
+		x = x.sub((H.inverse()).mult(grad));
+		if (k>1 && norm(x.sub(x_old))< Math.max(ap,norm(x)*rp)){
+			return xd;
+		}
+	}
+	throw "no convergence";
+}
